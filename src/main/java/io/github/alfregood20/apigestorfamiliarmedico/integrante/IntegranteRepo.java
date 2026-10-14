@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface IntegranteRepo extends JpaRepository<Integrante, Long> {
 
     List<Integrante> findByFamilia (Familia familia);
-    Optional<Integrante> findByIdIntegrateAndFamilia(Long idIntegrate, Familia familia);
+    Optional<Integrante> findByIdAndFamilia(Long idIntegrate, Familia familia);
 }

@@ -7,7 +7,9 @@ import java.time.LocalDateTime;
 
 public record CuidadorResponse(
         Long id,
-        String nombreCompleto,
+        String nombre,
+        String apellidoPaterno,
+        String aepllidoMaterno,
         String correo,
         String telefono,
         RolEnum rol,

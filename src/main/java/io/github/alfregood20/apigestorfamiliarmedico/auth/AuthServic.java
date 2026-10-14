@@ -9,6 +9,9 @@ import io.github.alfregood20.apigestorfamiliarmedico.exception.DuplicateExceptio
 import io.github.alfregood20.apigestorfamiliarmedico.familia.Familia;
 import io.github.alfregood20.apigestorfamiliarmedico.familia.FamiliaRepo;
 import io.github.alfregood20.apigestorfamiliarmedico.familia.dto.FamiliaResponse;
+import io.github.alfregood20.apigestorfamiliarmedico.integrante.Integrante;
+import io.github.alfregood20.apigestorfamiliarmedico.integrante.IntegranteRepo;
+import io.github.alfregood20.apigestorfamiliarmedico.integrante.enums.ParentescoEnum;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.Usuario;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.UsuarioRepo;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.enums.RolEnum;
@@ -31,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthServic {
 
     private final FamiliaRepo familiaRepo;
+    private final IntegranteRepo integranteRepo;
     private final UsuarioRepo usuarioRepo;
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
@@ -52,7 +56,9 @@ public class AuthServic {
 
         Usuario usuario = Usuario.builder()
                 .familia(familia)
-                .nombreCompleto(request.nombreCompleto())
+                .nombre(request.nombre())
+                .apellidoPaterno(request.apellidoPaterno())
+                .apellidoMaterno(request.apellidoMaterno())
                 .correo(request.correo())
                 .telefono(request.telefono())
                 .contrasenaHash(encoder.encode(request.contrasena()))
@@ -61,9 +67,23 @@ public class AuthServic {
 
         usuario = usuarioRepo.save(usuario);
 
+        Integrante integranteTitular = Integrante.builder()
+                .familia(familia)
+                .nombre(usuario.getNombre())
+                .apellidoPaterno(usuario.getApellidoPaterno())
+                .apellidoMaterno(usuario.getApellidoMaterno())
+                .fechaNacimiento(request.fechaNacimiento())
+                .sexo(request.sexo())
+                .parentesco(ParentescoEnum.TITULAR)
+                .build();
+
+        integranteRepo.save(integranteTitular);
+
         return new RegistroResponse(
                 usuario.getId(),
-                usuario.getNombreCompleto(),
+                usuario.getNombre(),
+                usuario.getApellidoPaterno(),
+                usuario.getApellidoMaterno(),
                 usuario.getCorreo(),
                 usuario.getTelefono(),
                 usuario.getEstado().name(),

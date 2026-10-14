@@ -27,8 +27,14 @@ public class Usuario {
     @JoinColumn(name = "id_familia", nullable = false)
     private Familia familia;
 
-    @Column(name = "nombre_completo", nullable = false)
-    private String nombreCompleto;
+    @Column(nullable = false)
+    private String nombre;
+
+    @Column(name = "apellido_paterno", nullable = true)
+    private String apellidoPaterno;
+
+    @Column(name = "apellido_materno", nullable = true)
+    private String apellidoMaterno;
 
     @Column(nullable = false, unique = true)
     private String correo;

@@ -7,8 +7,11 @@ import jakarta.validation.constraints.Size;
 public record CuidadorRequest(
 
         @NotBlank(message = "Es obligatorio")
-        @Size(max = 200, message = "Máximo 200 caracteres")
-        String nombreCompleto,
+        String nombre,
+
+        String apellidoPaterno,
+
+        String apellidoMaterno,
 
         @NotBlank(message = "Es obligatorio")
         @Email(message = "Formato inválido")

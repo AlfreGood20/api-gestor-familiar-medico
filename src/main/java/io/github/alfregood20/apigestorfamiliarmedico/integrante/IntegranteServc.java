@@ -43,7 +43,7 @@ public class IntegranteServc {
     @Transactional
     public void eliminar(CustomUserDetails usuario, Long idIntegrante){
         Usuario autenticado = buscarUsuarioPorId(usuario.getId());
-        Integrante integrante = integranteRepo.findByIdIntegrateAndFamilia(idIntegrante, autenticado.getFamilia())
+        Integrante integrante = integranteRepo.findByIdAndFamilia(idIntegrante, autenticado.getFamilia())
                 .orElseThrow(() -> new RecursoNoEncontradoException("Integrante con ID: "+idIntegrante+" no encontrado"));
 
         integranteRepo.delete(integrante);

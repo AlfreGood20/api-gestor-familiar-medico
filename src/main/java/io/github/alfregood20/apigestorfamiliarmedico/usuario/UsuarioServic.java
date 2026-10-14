@@ -28,7 +28,9 @@ public class UsuarioServic {
 
         Usuario cuidador = Usuario.builder()
                 .familia(autenticado.getFamilia())
-                .nombreCompleto(request.nombreCompleto())
+                .nombre(request.nombre())
+                .apellidoPaterno(request.apellidoPaterno())
+                .apellidoMaterno(request.apellidoMaterno())
                 .correo(request.correo())
                 .telefono(request.telefono())
                 .contrasenaHash(encoder.encode(request.contrasena()))
@@ -39,7 +41,9 @@ public class UsuarioServic {
 
         return new CuidadorResponse(
                 cuidador.getId(),
-                cuidador.getNombreCompleto(),
+                cuidador.getNombre(),
+                cuidador.getApellidoPaterno(),
+                cuidador.getApellidoMaterno(),
                 cuidador.getCorreo(),
                 cuidador.getTelefono(),
                 cuidador.getRol(),

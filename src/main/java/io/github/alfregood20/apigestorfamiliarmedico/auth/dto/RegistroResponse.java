@@ -7,7 +7,9 @@ import java.time.LocalDateTime;
 public record RegistroResponse(
 
         Long id,
-        String nombreCompleto,
+        String nombre,
+        String apellidoPaterno,
+        String apellidoMaterno,
         String correo,
         String telefono,
         String estado,

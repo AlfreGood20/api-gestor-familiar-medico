@@ -24,7 +24,7 @@ public class CustomUserDetails implements UserDetails {
     }
 
     public String getNombreCompleto(){
-        return usuario.getNombreCompleto();
+        return usuario.getNombre() + usuario.getApellidoPaterno() + usuario.getApellidoMaterno();
     }
 
     public String getRol (){

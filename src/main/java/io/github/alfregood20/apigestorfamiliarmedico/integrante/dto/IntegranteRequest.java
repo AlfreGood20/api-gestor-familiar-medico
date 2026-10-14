@@ -1,0 +1,26 @@
+package io.github.alfregood20.apigestorfamiliarmedico.integrante.dto;
+
+import io.github.alfregood20.apigestorfamiliarmedico.integrante.enums.ParentescoEnum;
+import io.github.alfregood20.apigestorfamiliarmedico.integrante.enums.SexoEnum;
+import io.github.alfregood20.apigestorfamiliarmedico.integrante.enums.TipoSangreEnum;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import java.time.LocalDate;
+
+public record IntegranteRequest(
+
+        @NotBlank(message = "Es obligatorio")
+        String nombre,
+        String apellidoPaterno,
+        String apellidoMaterno,
+        @NotNull(message = "Es obligatorio")
+        @Past(message = "Debe ser anterior a hoy")
+        LocalDate fechaNacimiento,
+        @NotNull(message = "Es obligatorio")
+        SexoEnum sexo,
+        TipoSangreEnum tipoSangre,
+        @NotNull(message = "Es obligatorio")
+        ParentescoEnum parentesco
+) {
+}

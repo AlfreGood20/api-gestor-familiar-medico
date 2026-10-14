@@ -12,6 +12,11 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
 
 @EnableMethodSecurity
 @Configuration
@@ -26,6 +31,19 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws  Exception{
         return http
                 .csrf(csrf -> csrf.disable())
+
+                // Configuracion de cors
+                .cors(cors -> cors
+                        .configurationSource(request -> {
+                            CorsConfiguration configuration = new CorsConfiguration();
+                            configuration.setAllowCredentials(true);
+                            configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173"));
+                            configuration.setAllowedMethods(List.of("*"));
+                            configuration.setAllowedHeaders(List.of("*"));
+
+                            return configuration;
+                        })
+                )
 
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(requests -> requests
@@ -46,7 +64,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
 
-                // Manejo para cerrar session
+                // Configuracion de cerrar session
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")
                         .invalidateHttpSession(true)

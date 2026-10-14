@@ -1,10 +1,7 @@
 package io.github.alfregood20.apigestorfamiliarmedico.familia;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -15,12 +12,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Setter
 @Getter
+@Builder
 public class Familia {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_familia")
-    private Long idFamilia;
+    private Long id;
 
     @Column(nullable = false, length = 100)
     private String nombre;

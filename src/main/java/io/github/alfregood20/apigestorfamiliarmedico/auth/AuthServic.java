@@ -62,12 +62,12 @@ public class AuthServic {
         usuario = usuarioRepo.save(usuario);
 
         return new RegistroResponse(
-                usuario.getIdUsuario(),
+                usuario.getId(),
                 usuario.getNombreCompleto(),
                 usuario.getCorreo(),
                 usuario.getTelefono(),
                 usuario.getEstado().name(),
-                new FamiliaResponse(usuario.getFamilia().getIdFamilia(),
+                new FamiliaResponse(usuario.getFamilia().getId(),
                         usuario.getFamilia().getNombre(),usuario.getFamilia().getDireccion()
                 ),
                 usuario.getFechaRegistro()

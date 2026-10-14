@@ -20,7 +20,7 @@ public class CustomUserDetails implements UserDetails {
     private Usuario usuario;
 
     public Long getId (){
-        return usuario.getIdUsuario();
+        return usuario.getId();
     }
 
     public String getNombreCompleto(){

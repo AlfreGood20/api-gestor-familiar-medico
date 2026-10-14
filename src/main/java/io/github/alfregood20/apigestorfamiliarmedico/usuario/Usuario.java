@@ -1,11 +1,10 @@
 package io.github.alfregood20.apigestorfamiliarmedico.usuario;
 
 import io.github.alfregood20.apigestorfamiliarmedico.familia.Familia;
+import io.github.alfregood20.apigestorfamiliarmedico.usuario.enums.EstadoUsuarioEnum;
+import io.github.alfregood20.apigestorfamiliarmedico.usuario.enums.RolEnum;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -16,12 +15,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Usuario {
 
     @Id
     @Column(name = "id_usuario")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idUsuario;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_familia", nullable = false)
@@ -43,6 +43,7 @@ public class Usuario {
     @Column(nullable = false)
     private RolEnum rol;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EstadoUsuarioEnum estado = EstadoUsuarioEnum.ACTIVO;

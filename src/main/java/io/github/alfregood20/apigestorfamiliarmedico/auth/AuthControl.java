@@ -29,5 +29,8 @@ public class AuthControl {
         return ResponseEntity.ok(authServic.login(request, req, res));
     }
 
+    @PostMapping("/logout")
+    public void logout() {};
+
 
 }

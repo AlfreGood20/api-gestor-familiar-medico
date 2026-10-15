@@ -47,7 +47,8 @@ public class SecurityConfig {
 
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/login","/auth/registro").permitAll()
+                        .requestMatchers("/auth/me", "/auth/logout").authenticated()
 
                         // integrantes
                         .requestMatchers(HttpMethod.GET, "/integrantes/**").hasAnyRole("ADMIN", "CUIDADOR")
@@ -56,7 +57,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/integrantes/**").hasRole("ADMIN")
 
                         // usuarios
-                        .requestMatchers(HttpMethod.POST, "/usuarios/**").hasRole("ADMIN")
+                        .requestMatchers("/usuarios/cuidadores/**").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )
 

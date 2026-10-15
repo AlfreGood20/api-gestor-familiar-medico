@@ -23,6 +23,10 @@ public class CustomUserDetails implements UserDetails {
         return usuario.getId();
     }
 
+    public Long getFamiliaId(){
+        return usuario.getFamilia().getId();
+    }
+
     public String getNombreCompleto(){
         return usuario.getNombre() + usuario.getApellidoPaterno() + usuario.getApellidoMaterno();
     }

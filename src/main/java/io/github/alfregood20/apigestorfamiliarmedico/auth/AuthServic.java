@@ -1,9 +1,6 @@
 package io.github.alfregood20.apigestorfamiliarmedico.auth;
 
-import io.github.alfregood20.apigestorfamiliarmedico.auth.dto.LoginRequest;
-import io.github.alfregood20.apigestorfamiliarmedico.auth.dto.LoginResponse;
-import io.github.alfregood20.apigestorfamiliarmedico.auth.dto.RegistroRequest;
-import io.github.alfregood20.apigestorfamiliarmedico.auth.dto.RegistroResponse;
+import io.github.alfregood20.apigestorfamiliarmedico.auth.dto.*;
 import io.github.alfregood20.apigestorfamiliarmedico.configuration.CustomUserDetails;
 import io.github.alfregood20.apigestorfamiliarmedico.exception.DuplicateException;
 import io.github.alfregood20.apigestorfamiliarmedico.familia.Familia;
@@ -69,6 +66,7 @@ public class AuthServic {
 
         Integrante integranteTitular = Integrante.builder()
                 .familia(familia)
+                .usuario(usuario)
                 .nombre(usuario.getNombre())
                 .apellidoPaterno(usuario.getApellidoPaterno())
                 .apellidoMaterno(usuario.getApellidoMaterno())
@@ -97,7 +95,7 @@ public class AuthServic {
     public LoginResponse login(LoginRequest requestBody, HttpServletRequest request, HttpServletResponse response){
 
         Authentication auth = authenticationManager.authenticate(
-          new UsernamePasswordAuthenticationToken(requestBody.coreo(), requestBody.contrasena())
+          new UsernamePasswordAuthenticationToken(requestBody.correo(), requestBody.contrasena())
         );
 
         // evita session fixation si ya existía una sesión
@@ -115,6 +113,20 @@ public class AuthServic {
                 "Login exitoso",
                 user.getUsername(),
                 user.getRol()
+        );
+    }
+
+    public MeResponse autenticado(CustomUserDetails usuario){
+        Usuario autenticado = usuario.getUsuario();
+        return new MeResponse(
+          autenticado.getId(),
+          autenticado.getNombre(),
+          autenticado.getApellidoPaterno(),
+          autenticado.getApellidoMaterno(),
+          autenticado.getCorreo(),
+          autenticado.getTelefono(),
+          autenticado.getRol(),
+          autenticado.getFechaRegistro()
         );
     }
 }

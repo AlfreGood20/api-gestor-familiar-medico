@@ -8,7 +8,7 @@ public record LoginRequest(
 
         @Email(message = "Formato incorrecto")
         @NotBlank(message = "Es obligatorio")
-        String coreo,
+        String correo,
 
         @NotEmpty(message = "Es obligatorio")
         String contrasena

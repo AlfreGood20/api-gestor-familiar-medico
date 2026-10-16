@@ -1,7 +1,8 @@
 package io.github.alfregood20.apigestorfamiliarmedico.integrante;
 
-
+import io.github.alfregood20.apigestorfamiliarmedico.alergia.dto.IntegranteAlergiaRequest;
 import io.github.alfregood20.apigestorfamiliarmedico.configuration.CustomUserDetails;
+import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.IntegranteDetalleResponse;
 import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.IntegranteRequest;
 import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.IntegranteResponse;
 import jakarta.validation.Valid;
@@ -23,18 +24,49 @@ public class IntegranteControl {
     @PostMapping
     public ResponseEntity<IntegranteResponse> crear(
             @AuthenticationPrincipal CustomUserDetails usuario,
-            @Valid @RequestBody IntegranteRequest request){
+            @Valid @RequestBody IntegranteRequest request
+    ){
         return new ResponseEntity<IntegranteResponse>(integranteServc.crear(usuario, request), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<IntegranteResponse>> obtenerListado(@AuthenticationPrincipal CustomUserDetails usuario){
+    public ResponseEntity<List<IntegranteResponse>> obtenerListado(
+            @AuthenticationPrincipal CustomUserDetails usuario
+    ){
         return ResponseEntity.ok(integranteServc.obtenerListado(usuario));
     }
 
     @DeleteMapping("/{idIntegrante}")
-    public ResponseEntity<Void> eliminar(@AuthenticationPrincipal CustomUserDetails usuario, @PathVariable Long idIntegrante){
+    public ResponseEntity<Void> eliminar(
+            @AuthenticationPrincipal CustomUserDetails usuario, @PathVariable Long idIntegrante
+    ){
         integranteServc.eliminar(usuario, idIntegrante);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{idIntegrante}/alergias")
+    public ResponseEntity<IntegranteDetalleResponse> asignarAlergia(
+            @AuthenticationPrincipal CustomUserDetails usuario,
+            @PathVariable Long idIntegrante,
+            @RequestBody IntegranteAlergiaRequest request
+    ){
+        return new ResponseEntity<IntegranteDetalleResponse>(integranteServc.asignarleAlergia(usuario, idIntegrante, request), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{idIntegrante}")
+    public ResponseEntity<IntegranteDetalleResponse> obtenerDetalle(
+            @AuthenticationPrincipal CustomUserDetails usuario,
+            @PathVariable Long idIntegrante
+    ){
+        return ResponseEntity.ok(integranteServc.obtenerDetalle(usuario, idIntegrante));
+    }
+
+    @PutMapping("/{idIntegrante}")
+    public ResponseEntity<IntegranteDetalleResponse> actulizarDatos(
+            @AuthenticationPrincipal CustomUserDetails usuario,
+            @PathVariable Long idIntegrante,
+            @RequestBody IntegranteRequest request
+    ){
+        return ResponseEntity.ok(integranteServc.actualizarDatos(usuario, idIntegrante, request));
     }
 }

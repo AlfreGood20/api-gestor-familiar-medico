@@ -2,14 +2,20 @@ package io.github.alfregood20.apigestorfamiliarmedico.usuario;
 
 import io.github.alfregood20.apigestorfamiliarmedico.configuration.CustomUserDetails;
 import io.github.alfregood20.apigestorfamiliarmedico.exception.DuplicateException;
+import io.github.alfregood20.apigestorfamiliarmedico.exception.RecursoNoEncontradoException;
 import io.github.alfregood20.apigestorfamiliarmedico.exception.UsuarioNoEncontradoException;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.dto.CuidadorRequest;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.dto.CuidadorResponse;
+import io.github.alfregood20.apigestorfamiliarmedico.usuario.dto.EstadoRequest;
+import io.github.alfregood20.apigestorfamiliarmedico.usuario.enums.EstadoUsuarioEnum;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.enums.RolEnum;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +45,46 @@ public class UsuarioServic {
 
         cuidador = usuarioRepo.save(cuidador);
 
+        return toCuidadorResponse(cuidador);
+    }
+
+    public List<CuidadorResponse> obtenerCuidadores(CustomUserDetails usuario){
+        Usuario autenticado = buscarUsuarioPorId(usuario.getId());
+        return usuarioRepo.findByFamiliaAndRolOrderByFechaRegistroDesc(autenticado.getFamilia(), RolEnum.CUIDADOR)
+                .stream()
+                .map(cuidador -> toCuidadorResponse(cuidador))
+                .toList();
+    }
+
+    @Transactional
+    public CuidadorResponse cambiarEstadoCuidador(CustomUserDetails usuario, Long idCuidador, EstadoRequest request){
+        Usuario autenticado = buscarUsuarioPorId(usuario.getId());
+
+        Usuario cuidador = usuarioRepo.findByIdAndFamiliaAndRol(idCuidador, autenticado.getFamilia(), RolEnum.CUIDADOR)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Cuidador con ID:" + idCuidador + " no encontrado"));
+
+        cuidador.setEstado(request.estado());
+        cuidador = usuarioRepo.save(cuidador);
+        return toCuidadorResponse(cuidador);
+    }
+
+    @Transactional
+    public void eliminarCuidador(CustomUserDetails usuario, Long idCuidador){
+        Usuario autenticado = buscarUsuarioPorId(usuario.getId());
+
+        Usuario cuidador = usuarioRepo.findByIdAndFamiliaAndRol(idCuidador, autenticado.getFamilia(), RolEnum.CUIDADOR)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Cuidador con ID:" + idCuidador + " no encontrado"));
+
+        usuarioRepo.delete(cuidador);
+    }
+
+    // METODOS REUTILIZABLES
+    private Usuario buscarUsuarioPorId(Long id){
+        return usuarioRepo.findById(id)
+                .orElseThrow(() -> new UsuarioNoEncontradoException("Usuario no encontrado"));
+    }
+
+    private CuidadorResponse toCuidadorResponse(Usuario cuidador){
         return new CuidadorResponse(
                 cuidador.getId(),
                 cuidador.getNombre(),
@@ -50,11 +96,5 @@ public class UsuarioServic {
                 cuidador.getEstado(),
                 cuidador.getFechaRegistro()
         );
-    }
-
-    // METODOS REUTILIZABLES
-    private Usuario buscarUsuarioPorId(Long id){
-        return usuarioRepo.findById(id)
-                .orElseThrow(() -> new UsuarioNoEncontradoException("Usuario no encontrado"));
     }
 }

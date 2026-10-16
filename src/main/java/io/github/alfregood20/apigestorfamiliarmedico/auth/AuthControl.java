@@ -1,15 +1,14 @@
 package io.github.alfregood20.apigestorfamiliarmedico.auth;
 
-import io.github.alfregood20.apigestorfamiliarmedico.auth.dto.LoginRequest;
-import io.github.alfregood20.apigestorfamiliarmedico.auth.dto.LoginResponse;
-import io.github.alfregood20.apigestorfamiliarmedico.auth.dto.RegistroRequest;
-import io.github.alfregood20.apigestorfamiliarmedico.auth.dto.RegistroResponse;
+import io.github.alfregood20.apigestorfamiliarmedico.auth.dto.*;
+import io.github.alfregood20.apigestorfamiliarmedico.configuration.CustomUserDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,5 +31,8 @@ public class AuthControl {
     @PostMapping("/logout")
     public void logout() {};
 
-
+    @GetMapping("/me")
+    public ResponseEntity<MeResponse> me(@AuthenticationPrincipal CustomUserDetails usuario){
+        return ResponseEntity.ok(authServic.autenticado(usuario));
+    }
 }

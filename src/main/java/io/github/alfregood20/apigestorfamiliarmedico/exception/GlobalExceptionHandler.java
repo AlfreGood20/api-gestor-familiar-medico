@@ -17,6 +17,20 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(ReglaNegocioException.class)
+    public ResponseEntity<?> errorReglaDeNegocio(ReglaNegocioException ex, HttpServletRequest request){
+
+        ResponseException response = ResponseException.builder()
+                .status(HttpStatus.UNPROCESSABLE_CONTENT.value())
+                .error(HttpStatus.UNPROCESSABLE_CONTENT.getReasonPhrase())
+                .menssaje(ex.getMessage())
+                .uri(request.getRequestURI())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.UNPROCESSABLE_CONTENT);
+    }
+
     // 400 PARA MANEJAR CUANDO EL USUARIO NO MANDA NADA
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<?> bodyInvalido(HttpMessageNotReadableException ex, HttpServletRequest request) {

@@ -17,6 +17,20 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    public ResponseEntity<?> errorDatosDuplicados(DuplicateException ex, HttpServletRequest request){
+
+        ResponseException response = ResponseException.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .error(HttpStatus.CONTENT_TOO_LARGE.getReasonPhrase())
+                .menssaje(ex.getMessage())
+                .uri(request.getRequestURI())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
+    // 422 PARA MANEJAR ERROR DE REGLA DE NEGOCIO
     @ExceptionHandler(ReglaNegocioException.class)
     public ResponseEntity<?> errorReglaDeNegocio(ReglaNegocioException ex, HttpServletRequest request){
 

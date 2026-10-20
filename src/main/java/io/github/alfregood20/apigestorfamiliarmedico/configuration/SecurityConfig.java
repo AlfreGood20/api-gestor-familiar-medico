@@ -58,6 +58,11 @@ public class SecurityConfig {
 
                         // usuarios
                         .requestMatchers("/usuarios/cuidadores/**").hasRole("ADMIN")
+
+                        // medicamentos
+                        .requestMatchers(HttpMethod.GET, "/medicamentos/**").authenticated()
+                        .requestMatchers("/medicamentos/**").denyAll()
+
                         .anyRequest().permitAll()
                 )
 

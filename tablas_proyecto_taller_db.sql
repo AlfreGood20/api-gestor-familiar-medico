@@ -2,7 +2,6 @@ CREATE DATABASE gestor_familia_medico;
 
 USE gestor_familia_medico;
 
-
 CREATE TABLE familias (
 	id_familia BIGINT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -47,12 +46,20 @@ CREATE TABLE integrantes (
             'AB_POSITIVO','AB_NEGATIVO',
             'O_POSITIVO','O_NEGATIVO','SIN_DEFINIR')
 	),
-    CONSTRAINT chk_integrantes_parentesco CHECK 
-		(parentesco IN 
-			('PADRE','MADRE','HIJO','HIJA','HERMANO','HERMANA',
-			'ABUELO','ABUELA','NIETO','NIETA','TIO','TIA','PRIMO','PRIMA','OTRO')
-	),
-    
+    CONSTRAINT chk_integrantes_parentesco CHECK(parentesco IN
+            (
+                'TITULAR', 'ESPOSO', 'ESPOSA', 'PAREJA',
+                'PADRE', 'MADRE', 'HIJO', 'HIJA',
+                'HERMANO', 'HERMANA', 'ABUELO', 'ABUELA',
+                'BISABUELO', 'BISABUELA', 'NIETO', 'NIETA',
+                'TIO', 'TIA', 'SOBRINO', 'SOBRINA',
+                'PRIMO', 'PRIMA', 'SUEGRO', 'SUEGRA',
+                'YERNO', 'NUERA', 'CUNADO', 'CUNADA',
+                'PADRASTRO', 'MADRASTRA', 'HIJASTRO', 'HIJASTRA',
+                'OTRO'
+            )
+    ),
+
     FOREIGN KEY (id_familia) REFERENCES familias(id_familia),
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
 );
@@ -90,7 +97,7 @@ CREATE TABLE integrante_alergias (
     
     CONSTRAINT chk_integrante_alergias_severidad CHECK (severidad IN ('LEVE','MODERADA','GRAVE')),
     PRIMARY KEY (id_integrante, id_alergia),
-    FOREIGN KEY (id_integrante) REFERENCES integrantes(id_integrante),
+    FOREIGN KEY (id_integrante) REFERENCES integrantes(id_integrante) ON DELETE CASCADE ,
     FOREIGN KEY (id_alergia) REFERENCES alergias(id_alergia)
 );
 
@@ -131,10 +138,17 @@ CREATE TABLE stock_medicamentos (
     
     CONSTRAINT chk_stock_cantidad CHECK (cantidad >= 0),
     CONSTRAINT chk_stock_cantidad_minima CHECK (cantidad_minima >= 0),
-    CONSTRAINT chk_stock_unidad CHECK (unidad IN (
-        'TABLETAS','CAPSULAS','ML','GRAMOS','DOSIS','PIEZAS','OTRA')),
+    CONSTRAINT chk_stock_unidad CHECK (unidad IN
+            (
+              'TABLETAS', 'CAPSULAS', 'ML', 'GRAMOS', 'DOSIS', 'PIEZAS',
+              'TABLETA', 'CAPSULA', 'JARABE', 'SUSPENSION', 'GOTAS',
+              'INYECCION', 'CREMA', 'POMADA', 'INHALADOR', 'SUPOSITORIO',
+              'PARCHE', 'OTRA'
+        )
+    ),
     CONSTRAINT chk_stock_estado CHECK (estado IN (
-        'DISPONIBLE','AGOTADO','CADUCADO','DESECHADO')),
+        'DISPONIBLE','AGOTADO','CADUCADO','DESECHADO')
+    ),
 
 	FOREIGN KEY (id_familia) REFERENCES familias(id_familia),
     FOREIGN KEY (id_medicamento) REFERENCES medicamentos(id_medicamento)
@@ -282,3 +296,4 @@ CREATE TABLE tomas_programadas (
 );
 
 SHOW TABLES;
+

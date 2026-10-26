@@ -1,5 +1,6 @@
 package io.github.alfregood20.apigestorfamiliarmedico.integrante;
 
+import io.github.alfregood20.apigestorfamiliarmedico.alergia.IntegranteAlergia;
 import io.github.alfregood20.apigestorfamiliarmedico.familia.Familia;
 import io.github.alfregood20.apigestorfamiliarmedico.integrante.enums.ParentescoEnum;
 import io.github.alfregood20.apigestorfamiliarmedico.integrante.enums.SexoEnum;
@@ -11,6 +12,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "integrantes")
@@ -62,4 +64,7 @@ public class Integrante {
     @CreationTimestamp
     @Column(name = "fecha_registro", updatable = false, nullable = false)
     private LocalDateTime fechaRegistro;
+
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "integrante", orphanRemoval = true)
+    public List<IntegranteAlergia> integranteAlergia;
 }

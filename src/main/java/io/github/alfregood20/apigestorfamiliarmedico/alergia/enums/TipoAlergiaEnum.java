@@ -6,5 +6,6 @@ public enum TipoAlergiaEnum {
     AMBIENTAL,
     CONTACTO,
     INSECTO,
+    OTRA,
     SIN_DEFINIR
 }

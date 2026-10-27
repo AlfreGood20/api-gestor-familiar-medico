@@ -33,10 +33,15 @@ CREATE TABLE integrantes (
     apellido_paterno VARCHAR(255) NULL,
     apellido_materno VARCHAR(255) NULL,
     fecha_nacimiento DATE NOT NULL,
+    peso_kg DECIMAL(5,2) NULL,
+    estatura_cm DECIMAL(5,2) NULL,
     sexo VARCHAR(15) NOT NULL,
     tipo_sangre VARCHAR(20) NOT NULL DEFAULT 'SIN_DEFINIR',
     parentesco VARCHAR(20) NOT NULL,
     fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT chk_integrantes_peso CHECK (peso_kg IS NULL OR peso_kg > 0),
+    CONSTRAINT chk_integrantes_estatura CHECK (estatura_cm IS NULL OR estatura_cm > 0),
     
     CONSTRAINT chk_integrantes_sexo CHECK (sexo IN ('MASCULINO','FEMENINO')),
     CONSTRAINT chk_integrantes_tipo_sangre CHECK 

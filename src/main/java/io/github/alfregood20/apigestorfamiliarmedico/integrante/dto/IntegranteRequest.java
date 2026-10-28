@@ -6,6 +6,10 @@ import io.github.alfregood20.apigestorfamiliarmedico.integrante.enums.TipoSangre
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.PositiveOrZero;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record IntegranteRequest(
@@ -17,6 +21,10 @@ public record IntegranteRequest(
         @NotNull(message = "Es obligatorio")
         @Past(message = "Debe ser anterior a hoy")
         LocalDate fechaNacimiento,
+        @PositiveOrZero(message = "Debe ser positivo o cero")
+        BigDecimal peso,
+        @PositiveOrZero(message = "Debe ser positivo o cero")
+        BigDecimal estatura,
         @NotNull(message = "Es obligatorio")
         SexoEnum sexo,
         TipoSangreEnum tipoSangre,

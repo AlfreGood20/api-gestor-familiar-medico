@@ -10,6 +10,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,6 +48,12 @@ public class Integrante {
 
     @Column(name = "fecha_nacimiento", nullable = false)
     private LocalDate fechaNacimiento;
+
+    @Column(name = "peso_kg", precision = 5, scale = 2, nullable = true)
+    private BigDecimal peso;
+
+    @Column(name = "estatura_cm", precision = 5, scale = 2, nullable = true)
+    private BigDecimal estatura;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 15)

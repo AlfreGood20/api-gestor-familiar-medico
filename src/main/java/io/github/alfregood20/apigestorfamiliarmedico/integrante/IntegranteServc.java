@@ -132,6 +132,8 @@ public class IntegranteServc {
                 .apellidoPaterno(request.apellidoPaterno())
                 .apellidoMaterno(request.apellidoMaterno())
                 .fechaNacimiento(request.fechaNacimiento())
+                .peso(request.peso())
+                .estatura(request.estatura())
                 .sexo(request.sexo())
                 .tipoSangre(request.tipoSangre() != null ? request.tipoSangre() : TipoSangreEnum.SIN_DEFINIR)
                 .parentesco(request.parentesco())
@@ -145,6 +147,8 @@ public class IntegranteServc {
                 response.getApellidoPaterno(),
                 response.getApellidoMaterno(),
                 response.getFechaNacimiento(),
+                response.getPeso(),
+                response.getEstatura(),
                 response.getSexo(),
                 response.getTipoSangre(),
                 response.getParentesco(),
@@ -176,6 +180,8 @@ public class IntegranteServc {
                 integrante.getApellidoPaterno(),
                 integrante.getApellidoMaterno(),
                 integrante.getFechaNacimiento(),
+                integrante.getPeso(),
+                integrante.getEstatura(),
                 integrante.getSexo(),
                 integrante.getTipoSangre(),
                 integrante.getParentesco(),

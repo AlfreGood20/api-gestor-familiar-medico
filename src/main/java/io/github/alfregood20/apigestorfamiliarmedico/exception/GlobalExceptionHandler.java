@@ -17,6 +17,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(DuplicateException.class)
     public ResponseEntity<?> errorDatosDuplicados(DuplicateException ex, HttpServletRequest request){
 
         ResponseException response = ResponseException.builder()

@@ -108,6 +108,8 @@ public class IntegranteServc {
         integrante.setApellidoPaterno(request.apellidoPaterno());
         integrante.setApellidoMaterno(request.apellidoMaterno());
         integrante.setFechaNacimiento(request.fechaNacimiento());
+        integrante.setPeso(request.peso());
+        integrante.setEstatura(request.estatura());
         integrante.setSexo(request.sexo());
         integrante.setParentesco(request.parentesco());
 

@@ -63,6 +63,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/medicamentos/**").authenticated()
                         .requestMatchers("/medicamentos/**").denyAll()
 
+                        // stock
+                        .requestMatchers(HttpMethod.GET,"/stock/**").hasAnyRole("ADMIN","CUIDADOR")
+                        .requestMatchers(HttpMethod.POST,"/stock/**").hasAnyRole("ADMIN","CUIDADOR")
+                        .requestMatchers(HttpMethod.PUT,"/stock/**").hasAnyRole("ADMIN","CUIDADOR")
+                        .requestMatchers(HttpMethod.PATCH,"/stock/**").hasAnyRole("ADMIN","CUIDADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/stock/**").hasRole("ADMIN")
+
                         .anyRequest().permitAll()
                 )
 

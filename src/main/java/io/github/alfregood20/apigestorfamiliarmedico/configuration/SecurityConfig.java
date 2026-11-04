@@ -70,6 +70,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH,"/stock/**").hasAnyRole("ADMIN","CUIDADOR")
                         .requestMatchers(HttpMethod.DELETE, "/stock/**").hasRole("ADMIN")
 
+                        // medico
+                        .requestMatchers("/medicos/**").hasRole("ADMIN")
+
                         .anyRequest().permitAll()
                 )
 

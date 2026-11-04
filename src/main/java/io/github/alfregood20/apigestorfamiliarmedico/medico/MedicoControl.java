@@ -3,6 +3,7 @@ package io.github.alfregood20.apigestorfamiliarmedico.medico;
 import io.github.alfregood20.apigestorfamiliarmedico.configuration.CustomUserDetails;
 import io.github.alfregood20.apigestorfamiliarmedico.medico.dto.MedicoRequest;
 import io.github.alfregood20.apigestorfamiliarmedico.medico.dto.MedicoResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/medicos")
 @RequiredArgsConstructor
+@Tag(name = "Gestion de medicos", description = "Endpoints para gestionar los medicos de la familia, crear, obtener y eliminar")
 public class MedicoControl {
 
     private final MedicoServ medicoServ;

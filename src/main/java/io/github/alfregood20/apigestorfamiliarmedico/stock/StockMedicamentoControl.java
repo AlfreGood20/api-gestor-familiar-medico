@@ -3,6 +3,7 @@ package io.github.alfregood20.apigestorfamiliarmedico.stock;
 import io.github.alfregood20.apigestorfamiliarmedico.configuration.CustomUserDetails;
 import io.github.alfregood20.apigestorfamiliarmedico.stock.dto.*;
 import io.github.alfregood20.apigestorfamiliarmedico.stock.enums.EstadoStockEnum;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
@@ -18,6 +19,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/stock")
 @RequiredArgsConstructor
+@Tag(
+        name = "Gestion de stock medicamentos",
+        description = "Endpoints para la gestion de stock de medicamentos familiar, administraras las diferentes operaciones"
+)
 public class StockMedicamentoControl {
 
     private final StockMedicamentoServic stockMedicamentoServic;

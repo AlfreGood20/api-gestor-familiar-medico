@@ -4,6 +4,7 @@ import io.github.alfregood20.apigestorfamiliarmedico.medicamento.dto.Medicamento
 import io.github.alfregood20.apigestorfamiliarmedico.medicamento.dto.MedicamentoResponse;
 import io.github.alfregood20.apigestorfamiliarmedico.medicamento.enums.FormaFarmaceuticaEnum;
 import io.github.alfregood20.apigestorfamiliarmedico.medicamento.enums.ViaAdministracionEnum;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/medicamentos")
 @AllArgsConstructor
+@Tag(name = "Catalogo de medicamentos", description = "Endpoints para catalogo de medicamentos, crear y obtener")
 public class MedicamentoControl {
 
     private final MedicamentoServc medicamentoServc;

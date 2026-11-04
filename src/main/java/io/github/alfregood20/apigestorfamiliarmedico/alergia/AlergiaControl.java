@@ -1,6 +1,7 @@
 package io.github.alfregood20.apigestorfamiliarmedico.alergia;
 
 import io.github.alfregood20.apigestorfamiliarmedico.alergia.enums.TipoAlergiaEnum;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/alergia")
 @AllArgsConstructor
+@Tag(name = "Catalogo de alergia", description = "Gestión del catálogo global de alergias y su asociación con los integrantes de la familia")
 public class AlergiaControl {
 
     private final AlergiaServc alergiaServc;

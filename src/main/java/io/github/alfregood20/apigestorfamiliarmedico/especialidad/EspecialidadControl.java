@@ -1,6 +1,7 @@
 package io.github.alfregood20.apigestorfamiliarmedico.especialidad;
 
 import io.github.alfregood20.apigestorfamiliarmedico.especialidad.dto.EspecilidadRequest;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/especialidades")
 @RequiredArgsConstructor
+@Tag(name = "Catalogo especialidad de medicos", description = "Endpoints para especialidad de los medicos, crear, obtener y eliminar especialidad.")
 public class EspecialidadControl {
 
     private final EspecilidadServ especilidadServ;

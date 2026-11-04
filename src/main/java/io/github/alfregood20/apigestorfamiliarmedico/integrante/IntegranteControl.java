@@ -5,6 +5,7 @@ import io.github.alfregood20.apigestorfamiliarmedico.configuration.CustomUserDet
 import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.IntegranteDetalleResponse;
 import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.IntegranteRequest;
 import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.IntegranteResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/integrantes")
 @RequiredArgsConstructor
+@Tag(name = "Gestion de integrantes", description = "Endpoints para gestion de los integrantes del usuario aqui podras hacer diferentes operaciones.")
 public class IntegranteControl {
 
     private final IntegranteServc integranteServc;

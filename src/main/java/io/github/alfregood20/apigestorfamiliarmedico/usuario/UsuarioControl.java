@@ -4,6 +4,7 @@ import io.github.alfregood20.apigestorfamiliarmedico.configuration.CustomUserDet
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.dto.CuidadorRequest;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.dto.CuidadorResponse;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.dto.EstadoRequest;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/usuarios")
 @RequiredArgsConstructor
+@Tag(
+        name = "Gestion de usuario",
+        description = "Endpoints gestion de usuarios, gestionaras los cuidadores con los diferentes operaciones"
+)
 public class UsuarioControl {
 
     private final UsuarioServic usuarioServic;

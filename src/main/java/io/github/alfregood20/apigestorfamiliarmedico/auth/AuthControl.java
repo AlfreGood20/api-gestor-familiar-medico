@@ -2,6 +2,7 @@ package io.github.alfregood20.apigestorfamiliarmedico.auth;
 
 import io.github.alfregood20.apigestorfamiliarmedico.auth.dto.*;
 import io.github.alfregood20.apigestorfamiliarmedico.configuration.CustomUserDetails;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Tag(name = "Gestion de autenticacion", description = "Endpoints para el inicio de sesión, registro de nuevas cuentas familiares y consulta del perfil actual.")
 public class AuthControl {
 
     private final AuthServic authServic;

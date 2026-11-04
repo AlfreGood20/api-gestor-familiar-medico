@@ -73,7 +73,10 @@ public class SecurityConfig {
                         // medico
                         .requestMatchers("/medicos/**").hasRole("ADMIN")
 
-                        .anyRequest().permitAll()
+                        // swagger
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger", "/api-docs/**").permitAll()
+
+                        .anyRequest().denyAll()
                 )
 
                 .sessionManagement(session -> session

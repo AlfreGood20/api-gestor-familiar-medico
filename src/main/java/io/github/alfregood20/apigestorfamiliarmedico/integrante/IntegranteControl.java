@@ -48,7 +48,7 @@ public class IntegranteControl {
     public ResponseEntity<IntegranteDetalleResponse> asignarAlergia(
             @AuthenticationPrincipal CustomUserDetails usuario,
             @PathVariable Long idIntegrante,
-            @RequestBody IntegranteAlergiaRequest request
+            @RequestBody @Valid IntegranteAlergiaRequest request
     ){
         return new ResponseEntity<IntegranteDetalleResponse>(integranteServc.asignarleAlergia(usuario, idIntegrante, request), HttpStatus.CREATED);
     }
@@ -65,7 +65,7 @@ public class IntegranteControl {
     public ResponseEntity<IntegranteDetalleResponse> actulizarDatos(
             @AuthenticationPrincipal CustomUserDetails usuario,
             @PathVariable Long idIntegrante,
-            @RequestBody IntegranteRequest request
+            @RequestBody @Valid IntegranteRequest request
     ){
         return ResponseEntity.ok(integranteServc.actualizarDatos(usuario, idIntegrante, request));
     }

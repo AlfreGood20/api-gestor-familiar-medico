@@ -3,6 +3,7 @@ package io.github.alfregood20.apigestorfamiliarmedico.stock;
 import io.github.alfregood20.apigestorfamiliarmedico.configuration.CustomUserDetails;
 import io.github.alfregood20.apigestorfamiliarmedico.stock.dto.*;
 import io.github.alfregood20.apigestorfamiliarmedico.stock.enums.EstadoStockEnum;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -22,7 +23,10 @@ public class StockMedicamentoControl {
     private final StockMedicamentoServic stockMedicamentoServic;
 
     @PostMapping
-    public ResponseEntity<StockResponse> crearNuevo(@AuthenticationPrincipal CustomUserDetails usuario, @RequestBody StockRequest request){
+    public ResponseEntity<StockResponse> crearNuevo(
+            @AuthenticationPrincipal CustomUserDetails usuario,
+            @RequestBody @Valid StockRequest request
+    ){
         return new ResponseEntity<StockResponse>(
                 stockMedicamentoServic.crear(usuario, request), HttpStatus.CREATED
         );
@@ -63,7 +67,7 @@ public class StockMedicamentoControl {
     public ResponseEntity<StockResponse> actualizarDatoStock(
             @AuthenticationPrincipal CustomUserDetails usuario,
             @PathVariable Long idStock,
-            @RequestBody StockUpdateRequest request)
+            @RequestBody @Valid StockUpdateRequest request)
     {
         return ResponseEntity.ok(stockMedicamentoServic.actualizarDatoStock(usuario, idStock, request));
     }
@@ -72,7 +76,7 @@ public class StockMedicamentoControl {
     public ResponseEntity<StockResponse> actualizarDatosParciales(
             @AuthenticationPrincipal CustomUserDetails usuario,
             @PathVariable Long idStock,
-            @RequestBody StockUpdateParcialRequest request
+            @RequestBody @Valid StockUpdateParcialRequest request
     ){
         return ResponseEntity.ok(stockMedicamentoServic.actualizarDatosParcial(usuario, idStock, request));
     }

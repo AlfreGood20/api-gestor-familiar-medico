@@ -4,6 +4,7 @@ import io.github.alfregood20.apigestorfamiliarmedico.medicamento.dto.Medicamento
 import io.github.alfregood20.apigestorfamiliarmedico.medicamento.dto.MedicamentoResponse;
 import io.github.alfregood20.apigestorfamiliarmedico.medicamento.enums.FormaFarmaceuticaEnum;
 import io.github.alfregood20.apigestorfamiliarmedico.medicamento.enums.ViaAdministracionEnum;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -22,7 +23,7 @@ public class MedicamentoControl {
     private final MedicamentoServc medicamentoServc;
 
     @PostMapping
-    public ResponseEntity<MedicamentoResponse> crear(@RequestBody MedicamentoRequest request){
+    public ResponseEntity<MedicamentoResponse> crear(@Valid @RequestBody MedicamentoRequest request){
         return new ResponseEntity<>(medicamentoServc.crear(request), HttpStatus.CREATED);
     }
 

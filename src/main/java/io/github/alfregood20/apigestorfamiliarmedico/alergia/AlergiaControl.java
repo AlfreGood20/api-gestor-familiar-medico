@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/alergia")
+@RequestMapping("/alergias")
 @AllArgsConstructor
 @Tag(name = "Catalogo de alergia", description = "Gestión del catálogo global de alergias y su asociación con los integrantes de la familia")
 public class AlergiaControl {

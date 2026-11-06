@@ -59,19 +59,26 @@ public class SecurityConfig {
                         // usuarios
                         .requestMatchers("/usuarios/cuidadores/**").hasRole("ADMIN")
 
-                        // medicamentos
-                        .requestMatchers(HttpMethod.GET, "/medicamentos/**").authenticated()
-                        .requestMatchers("/medicamentos/**").denyAll()
-
-                        // stock
+                        // stocks
                         .requestMatchers(HttpMethod.GET,"/stock/**").hasAnyRole("ADMIN","CUIDADOR")
                         .requestMatchers(HttpMethod.POST,"/stock/**").hasAnyRole("ADMIN","CUIDADOR")
                         .requestMatchers(HttpMethod.PUT,"/stock/**").hasAnyRole("ADMIN","CUIDADOR")
                         .requestMatchers(HttpMethod.PATCH,"/stock/**").hasAnyRole("ADMIN","CUIDADOR")
                         .requestMatchers(HttpMethod.DELETE, "/stock/**").hasRole("ADMIN")
 
-                        // medico
+                        // medicos
                         .requestMatchers("/medicos/**").hasRole("ADMIN")
+
+                        //## endpoits publicos solo para poblar la base de datos ##
+
+                        // alergia
+                        .requestMatchers("/alergias/**").permitAll()
+
+                        // especialidades
+                        .requestMatchers("/especialidades/**").permitAll()
+
+                        // medicamentos
+                        .requestMatchers("/medicamentos/**").permitAll()
 
                         // swagger
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger", "/api-docs/**").permitAll()

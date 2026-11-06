@@ -4,6 +4,7 @@ import io.github.alfregood20.apigestorfamiliarmedico.configuration.CustomUserDet
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.dto.CuidadorRequest;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.dto.CuidadorResponse;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.dto.EstadoRequest;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,10 @@ public class UsuarioControl {
 
     private final UsuarioServic usuarioServic;
 
+    @Operation(
+            summary = "Crea nuevo cuidador para la familia",
+            description = "**ROLES:** ADMIN"
+    )
     @PostMapping("/cuidadores")
     public ResponseEntity<CuidadorResponse> crearNuevoCuidador(
             @AuthenticationPrincipal CustomUserDetails usuario,
@@ -33,11 +38,19 @@ public class UsuarioControl {
         return new ResponseEntity<CuidadorResponse>(usuarioServic.crearCuidador(usuario, request), HttpStatus.CREATED);
     }
 
+    @Operation(
+            summary = "Obtener todo los cuidadores de la familia",
+            description = "**ROLES:** ADMIN"
+    )
     @GetMapping("/cuidadores")
     public ResponseEntity<List<CuidadorResponse>> listadoCuidadores(@AuthenticationPrincipal CustomUserDetails usuario){
         return ResponseEntity.ok(usuarioServic.obtenerCuidadores(usuario));
     }
 
+    @Operation(
+            summary = "Actualizar el estado del cuidador por id de la familia",
+            description = "**ROLES:** ADMIN"
+    )
     @PatchMapping("/cuidadores/{idCuidador}/estado")
     public ResponseEntity<CuidadorResponse> cambiarEstadoCuidador(
             @AuthenticationPrincipal CustomUserDetails usuario,
@@ -47,6 +60,10 @@ public class UsuarioControl {
         return ResponseEntity.ok(usuarioServic.cambiarEstadoCuidador(usuario, idCuidador, request));
     }
 
+    @Operation(
+            summary = "Eliminar cuidador de la familia por id",
+            description = "**ROLES:** ADMIN"
+    )
     @DeleteMapping("/cuidadores/{idCuidador}")
     public ResponseEntity<Void> eliminarCuidador(
             @AuthenticationPrincipal CustomUserDetails usuario,

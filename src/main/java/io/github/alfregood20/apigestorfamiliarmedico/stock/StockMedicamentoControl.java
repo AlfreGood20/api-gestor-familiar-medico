@@ -3,6 +3,8 @@ package io.github.alfregood20.apigestorfamiliarmedico.stock;
 import io.github.alfregood20.apigestorfamiliarmedico.configuration.CustomUserDetails;
 import io.github.alfregood20.apigestorfamiliarmedico.stock.dto.*;
 import io.github.alfregood20.apigestorfamiliarmedico.stock.enums.EstadoStockEnum;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,10 @@ public class StockMedicamentoControl {
 
     private final StockMedicamentoServic stockMedicamentoServic;
 
+    @Operation(
+            summary = "Añadir nuevo medicamento al stock",
+            description = "**Roles:** ADMIN y CUIDADOR"
+    )
     @PostMapping
     public ResponseEntity<StockResponse> crearNuevo(
             @AuthenticationPrincipal CustomUserDetails usuario,
@@ -37,18 +43,31 @@ public class StockMedicamentoControl {
         );
     }
 
+    @Operation(
+            summary = "Obtener detalles de un medicamento del stock",
+            description = "**Roles:** ADMIN y CUIDADOR"
+    )
     @GetMapping("/{idStock}")
     public ResponseEntity<StockDatalleResponse> obtenerDetallePorId(
-            @AuthenticationPrincipal CustomUserDetails usuario,@PathVariable Long idStock)
+            @AuthenticationPrincipal CustomUserDetails usuario,
+            @PathVariable Long idStock
+    )
     {
         return ResponseEntity.ok(stockMedicamentoServic.obtenerPorId(usuario, idStock));
     }
 
+    @Operation(
+            summary = "Obtener todo el stock, por diferentes filtros",
+            description = "**ROLES:** ADMIN y CUIDADOR"
+    )
     @GetMapping
     public ResponseEntity<Page<StockDatalleResponse>> obtenerListado(
             @AuthenticationPrincipal CustomUserDetails usuario,
+            @Parameter(description = "Texto que empieze el nombre comercial o sustancia activa", example = "parac")
             @RequestParam(required = false) String nombre,
+            @Parameter(description = "Si es `true`, solo los que tienen cantidad igual o menor al mínimo configurado")
             @RequestParam(required = false) boolean bajoMinimo,
+            @Parameter(description = "Filtra por estado. Sin este filtro se excluyen los DESECHADOS")
             @RequestParam(required = false) EstadoStockEnum estado,
             @PageableDefault(size = 10, sort = "fechaCaducidad", direction = Sort.Direction.ASC) @ParameterObject Pageable pageable
             )
@@ -62,12 +81,20 @@ public class StockMedicamentoControl {
         ));
     }
 
+    @Operation(
+            summary = "Eliminar medicamento del stock por id",
+            description = "**ROLES:** ADMIN"
+    )
     @DeleteMapping("/{idStock}")
     public ResponseEntity<Void> eliminarPorId(@AuthenticationPrincipal CustomUserDetails usuario,@PathVariable Long idStock){
         stockMedicamentoServic.eliminarPorId(usuario, idStock);
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(
+            summary = "Actualizar los datos de un medicamento del stock",
+            description = "**Roles:** ADMIN y CUIDADOR"
+    )
     @PutMapping("/{idStock}")
     public ResponseEntity<StockResponse> actualizarDatoStock(
             @AuthenticationPrincipal CustomUserDetails usuario,
@@ -77,6 +104,10 @@ public class StockMedicamentoControl {
         return ResponseEntity.ok(stockMedicamentoServic.actualizarDatoStock(usuario, idStock, request));
     }
 
+    @Operation(
+            summary = "Actualizar datos parciales, ya sea solo la cantidad o el estado del medicamento del stock",
+            description = "**ROLES:** ADMIN Y CUIDADOR"
+    )
     @PatchMapping("/{idStock}")
     public ResponseEntity<StockResponse> actualizarDatosParciales(
             @AuthenticationPrincipal CustomUserDetails usuario,

@@ -5,6 +5,7 @@ import io.github.alfregood20.apigestorfamiliarmedico.configuration.CustomUserDet
 import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.IntegranteDetalleResponse;
 import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.IntegranteRequest;
 import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.IntegranteResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,10 @@ public class IntegranteControl {
 
     private final IntegranteServc integranteServc;
 
+    @Operation(
+            summary = "Crea nuevo integrante de la familia",
+            description = "**ROLES:** ADMIN"
+    )
     @PostMapping
     public ResponseEntity<IntegranteResponse> crear(
             @AuthenticationPrincipal CustomUserDetails usuario,
@@ -31,6 +36,10 @@ public class IntegranteControl {
         return new ResponseEntity<IntegranteResponse>(integranteServc.crear(usuario, request), HttpStatus.CREATED);
     }
 
+    @Operation(
+            summary = "Obtener todo los integrantes de la familia",
+            description = "**ROLES:** ADMIN y CUIDADOR"
+    )
     @GetMapping
     public ResponseEntity<List<IntegranteResponse>> obtenerListado(
             @AuthenticationPrincipal CustomUserDetails usuario
@@ -38,6 +47,10 @@ public class IntegranteControl {
         return ResponseEntity.ok(integranteServc.obtenerListado(usuario));
     }
 
+    @Operation(
+            summary = "Eliminar integrante de la familia",
+            description = "**ROLE:** ADMIN"
+    )
     @DeleteMapping("/{idIntegrante}")
     public ResponseEntity<Void> eliminar(
             @AuthenticationPrincipal CustomUserDetails usuario, @PathVariable Long idIntegrante
@@ -46,6 +59,10 @@ public class IntegranteControl {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(
+            summary = "Añadir alergia a un integrante de la familia",
+            description = "**ROLE:** ADMIN"
+    )
     @PostMapping("/{idIntegrante}/alergias")
     public ResponseEntity<IntegranteDetalleResponse> asignarAlergia(
             @AuthenticationPrincipal CustomUserDetails usuario,
@@ -55,6 +72,10 @@ public class IntegranteControl {
         return new ResponseEntity<IntegranteDetalleResponse>(integranteServc.asignarleAlergia(usuario, idIntegrante, request), HttpStatus.CREATED);
     }
 
+    @Operation(
+            summary = "Obtener detalle de un integrante de la familia",
+            description = "**ROLES:** ADMIN y CUIDADOR"
+    )
     @GetMapping("/{idIntegrante}")
     public ResponseEntity<IntegranteDetalleResponse> obtenerDetalle(
             @AuthenticationPrincipal CustomUserDetails usuario,
@@ -63,6 +84,10 @@ public class IntegranteControl {
         return ResponseEntity.ok(integranteServc.obtenerDetalle(usuario, idIntegrante));
     }
 
+    @Operation(
+            summary = "Actualizar los datos de un integrante de la familia",
+            description = "**ROLES:** ADMIN"
+    )
     @PutMapping("/{idIntegrante}")
     public ResponseEntity<IntegranteDetalleResponse> actulizarDatos(
             @AuthenticationPrincipal CustomUserDetails usuario,

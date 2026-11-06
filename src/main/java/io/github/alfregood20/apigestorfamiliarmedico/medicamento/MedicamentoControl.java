@@ -4,6 +4,8 @@ import io.github.alfregood20.apigestorfamiliarmedico.medicamento.dto.Medicamento
 import io.github.alfregood20.apigestorfamiliarmedico.medicamento.dto.MedicamentoResponse;
 import io.github.alfregood20.apigestorfamiliarmedico.medicamento.enums.FormaFarmaceuticaEnum;
 import io.github.alfregood20.apigestorfamiliarmedico.medicamento.enums.ViaAdministracionEnum;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -24,22 +26,39 @@ public class MedicamentoControl {
 
     private final MedicamentoServc medicamentoServc;
 
+    @Operation(
+            summary = "Crea nuevo medicamento",
+            description = "Este endpoint nadien podra acceder solo es para insertar datos"
+    )
     @PostMapping
     public ResponseEntity<MedicamentoResponse> crear(@Valid @RequestBody MedicamentoRequest request){
         return new ResponseEntity<>(medicamentoServc.crear(request), HttpStatus.CREATED);
     }
 
+    @Operation(
+            summary = "Obtener el detalle de un medicamento por id",
+            description = "**ROLES:** ADMIN y CUIDADOR"
+    )
     @GetMapping("/{idMedicamento}")
     public ResponseEntity<MedicamentoResponse> obtenerPorId(@PathVariable Long idMedicamento){
         return ResponseEntity.ok(medicamentoServc.obtenerPorId(idMedicamento));
     }
 
+    @Operation(
+            summary = "Obtener el listado de medicamtos por diferentes filtros",
+            description = "**ROLES:** ADMIN y CUIDADOR"
+    )
     @GetMapping
     public ResponseEntity<Page<MedicamentoResponse>> listadoPorFiltros(
+            @Parameter(description = "Texto que comienze con el nombre comercial del medicamento", example = "temp")
             @RequestParam(required = false) String nombreComercial,
+            @Parameter(description = "Texto que comienze con la sustancia activa", example = "parac")
             @RequestParam(required = false) String sustanciaActiva,
+            @Parameter(description = "Opciones para obtener los medicamentos cuyas forma farmaceutica")
             @RequestParam(required = false) FormaFarmaceuticaEnum formaFarmaceutica,
+            @Parameter(description = "Opciones para obtener los medicamentos cuyas forma de consumir el medicamento")
             @RequestParam(required = false) ViaAdministracionEnum viaAdministracion,
+            @Parameter(description = "Opciones para obtener los medicamentos ya sea activos `true` o inactivos `false` ", example = "")
             @RequestParam(defaultValue = "true") boolean activo,
             @ParameterObject @PageableDefault(size = 15, sort = "nombreComercial", direction = Sort.Direction.ASC)  Pageable pageable
     ){

@@ -1,6 +1,7 @@
 package io.github.alfregood20.apigestorfamiliarmedico.alergia;
 
 import io.github.alfregood20.apigestorfamiliarmedico.alergia.enums.TipoAlergiaEnum;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,10 @@ public class AlergiaControl {
 
     private final AlergiaServc alergiaServc;
 
+    @Operation(
+            summary = "Obtener todo las alergias que puede tener un integrante de la familia",
+            description = "**ROLES:** ADMIN y CUIDADOR"
+    )
     @GetMapping
     public ResponseEntity<List<Alergia>> listado(
             @RequestParam(required = false) String nombre,

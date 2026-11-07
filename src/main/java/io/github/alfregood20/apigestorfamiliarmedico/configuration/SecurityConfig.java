@@ -53,7 +53,7 @@ public class SecurityConfig {
 
                         // integrantes
                         .requestMatchers(HttpMethod.GET, "/integrantes/**").hasAnyRole("ADMIN", "CUIDADOR")
-                        .requestMatchers(HttpMethod.POST, "/integrantes").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/integrantes/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/integrantes/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/integrantes/**").hasRole("ADMIN")
 

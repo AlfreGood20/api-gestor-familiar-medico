@@ -2,6 +2,7 @@ package io.github.alfregood20.apigestorfamiliarmedico.alergia;
 
 import io.github.alfregood20.apigestorfamiliarmedico.alergia.enums.TipoAlergiaEnum;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,9 @@ public class AlergiaControl {
     )
     @GetMapping
     public ResponseEntity<List<Alergia>> listado(
-            @RequestParam(required = false) String nombre,
+            @Parameter(description = "Texto que comienza con el nombre de la alergia")
+            @RequestParam(required = false, defaultValue = "") String nombre,
+            @Parameter(description = "Opciones para obtener alergias su tipo")
             @RequestParam(required = false) TipoAlergiaEnum tipo){
         return ResponseEntity.ok(alergiaServc.obtenerPorFiltro(nombre, tipo));
     }

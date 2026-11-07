@@ -11,8 +11,8 @@ public interface AlergiaRepo extends JpaRepository<Alergia, Long> {
 
     @Query("""
            SELECT a FROM Alergia a
-           WHERE (:nombre IS NULL OR LOWER(a.nombre) LIKE (CONCAT(:nombre,'%')))
-           AND(:tipo IS NULL OR a.tipo = :tipo)
+           WHERE LOWER(a.nombre) LIKE (CONCAT(:nombre,'%'))
+           AND (:tipo IS NULL OR a.tipo = :tipo)
            ORDER BY a.nombre ASC
            """
     )

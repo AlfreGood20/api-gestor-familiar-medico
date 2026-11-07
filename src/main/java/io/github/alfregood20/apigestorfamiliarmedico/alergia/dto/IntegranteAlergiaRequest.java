@@ -10,7 +10,7 @@ public record IntegranteAlergiaRequest(
         @NotNull(message = "Es obligatorio")
         @Positive(message = "El valor tiene que ser positivo")
         Long idAlergia,
-        @NotBlank(message = "Es obligatorio")
+        @NotNull(message = "Es obligatorio")
         SeveridadAlergiaEnum severidad,
         @Size(max = 255, message = "Máximo 255 caracteres")
         String observaciones

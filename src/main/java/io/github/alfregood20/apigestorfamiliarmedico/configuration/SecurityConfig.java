@@ -49,6 +49,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/auth/login","/auth/registro").permitAll()
                         .requestMatchers("/auth/me", "/auth/logout").authenticated()
+                        .requestMatchers("/health").permitAll()
 
                         // integrantes
                         .requestMatchers(HttpMethod.GET, "/integrantes/**").hasAnyRole("ADMIN", "CUIDADOR")

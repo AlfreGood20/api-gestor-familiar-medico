@@ -1,6 +1,7 @@
 package io.github.alfregood20.apigestorfamiliarmedico.stock;
 
 import io.github.alfregood20.apigestorfamiliarmedico.familia.Familia;
+import io.github.alfregood20.apigestorfamiliarmedico.medicamento.Medicamento;
 import io.github.alfregood20.apigestorfamiliarmedico.stock.enums.EstadoStockEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,4 +37,6 @@ public interface StockMedicamentoRepo extends JpaRepository<StockMedicamento, Lo
             @Param("estado") EstadoStockEnum estado,
             Pageable pageable
     );
+
+    boolean existsByMedicamentoAndFamilia(Medicamento medicamento, Familia familia);
 }

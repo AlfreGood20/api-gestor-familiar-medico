@@ -20,9 +20,6 @@ public record StockRequest(
         int cantidadMinima,
 
         @NotNull(message = "Es obligatorio")
-        UnidadStockEnum unidad,
-
-        @NotNull(message = "Es obligatorio")
         @FutureOrPresent(message = "El medicamento esta caducado")
         LocalDate fechaCaducidad
 ) {

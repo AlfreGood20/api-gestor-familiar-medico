@@ -14,7 +14,6 @@ public record StockResponse(
         int cantidadMinima,
         UnidadStockEnum unidad,
         EstadoStockEnum estado,
-        LocalDate fechaCaducidad,
-        LocalDateTime fechaRegistro
+        LocalDate fechaCaducidad
 ) {
 }

@@ -61,12 +61,12 @@ public class StockMedicamentoControl {
             description = "**ROLES:** ADMIN y CUIDADOR"
     )
     @GetMapping
-    public ResponseEntity<Page<StockDatalleResponse>> obtenerListado(
+    public ResponseEntity<Page<StockResponse>> obtenerListado(
             @AuthenticationPrincipal CustomUserDetails usuario,
-            @Parameter(description = "Texto que empieze el nombre comercial o sustancia activa", example = "parac")
-            @RequestParam(required = false) String nombre,
+            @Parameter(description = "Texto que empieze el nombre comercial o sustancia activa")
+            @RequestParam(required = false, defaultValue = "") String nombre,
             @Parameter(description = "Si es `true`, solo los que tienen cantidad igual o menor al mínimo configurado")
-            @RequestParam(required = false) boolean bajoMinimo,
+            @RequestParam(required = false, defaultValue = "false") boolean bajoMinimo,
             @Parameter(description = "Filtra por estado. Sin este filtro se excluyen los DESECHADOS")
             @RequestParam(required = false) EstadoStockEnum estado,
             @PageableDefault(size = 10, sort = "fechaCaducidad", direction = Sort.Direction.ASC) @ParameterObject Pageable pageable

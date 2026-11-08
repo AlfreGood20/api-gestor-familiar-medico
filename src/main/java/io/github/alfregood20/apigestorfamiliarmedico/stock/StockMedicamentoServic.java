@@ -1,6 +1,7 @@
 package io.github.alfregood20.apigestorfamiliarmedico.stock;
 
 import io.github.alfregood20.apigestorfamiliarmedico.configuration.CustomUserDetails;
+import io.github.alfregood20.apigestorfamiliarmedico.exception.DuplicateException;
 import io.github.alfregood20.apigestorfamiliarmedico.exception.RecursoNoEncontradoException;
 import io.github.alfregood20.apigestorfamiliarmedico.exception.ReglaNegocioException;
 import io.github.alfregood20.apigestorfamiliarmedico.medicamento.Medicamento;
@@ -8,6 +9,7 @@ import io.github.alfregood20.apigestorfamiliarmedico.medicamento.MedicamentoRepo
 import io.github.alfregood20.apigestorfamiliarmedico.medicamento.dto.MedicamentoResponse;
 import io.github.alfregood20.apigestorfamiliarmedico.stock.dto.*;
 import io.github.alfregood20.apigestorfamiliarmedico.stock.enums.EstadoStockEnum;
+import io.github.alfregood20.apigestorfamiliarmedico.stock.enums.UnidadStockEnum;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.Usuario;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.UsuarioRepo;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +34,15 @@ public class StockMedicamentoServic {
         Usuario autenticado = buscarUsuarioPorId(usuario.getId());
         Medicamento medicamento = buscarMedicamentoPorId(request.idMedicamento());
 
+        if(stockMedicamentoRepo.existsByMedicamentoAndFamilia(medicamento, autenticado.getFamilia())){
+            throw new DuplicateException("Medicamento "+medicamento.getSustanciaActiva()+", ya se encuentra registrado en stock");
+        }
+
         StockMedicamento stock = toEntity(request);
 
         stock.setFamilia(autenticado.getFamilia());
         stock.setMedicamento(medicamento);
+        stock.setUnidad(UnidadStockEnum.de(medicamento.getFormaFarmaceutica()));
 
         stockMedicamentoRepo.save(stock);
         return toResponse(stock);
@@ -50,7 +57,7 @@ public class StockMedicamentoServic {
     }
 
     @Transactional(readOnly = true)
-    public Page<StockDatalleResponse> obtenerPorFiltros(
+    public Page<StockResponse> obtenerPorFiltros(
             CustomUserDetails usuario, String nombre, boolean bajoMinimo, EstadoStockEnum estado, Pageable pageable
     ){
         Usuario autenticado = buscarUsuarioPorId(usuario.getId());
@@ -62,7 +69,7 @@ public class StockMedicamentoServic {
                 pageable
         );
 
-        Page<StockDatalleResponse> paginaResponse = pagina.map(this::toDetalleResponse);
+        Page<StockResponse> paginaResponse = pagina.map(this::toResponse);
         return paginaResponse;
     }
 
@@ -158,7 +165,6 @@ public class StockMedicamentoServic {
         return StockMedicamento.builder()
                 .cantidad(request.cantidad())
                 .cantidadMinima(request.cantidadMinima())
-                .unidad(request.unidad())
                 .fechaCaducidad(request.fechaCaducidad())
                 .build();
     }
@@ -171,8 +177,7 @@ public class StockMedicamentoServic {
                 response.getCantidadMinima(),
                 response.getUnidad(),
                 response.getEstado(),
-                response.getFechaCaducidad(),
-                response.getFechaRegistro()
+                response.getFechaCaducidad()
         );
     }
 

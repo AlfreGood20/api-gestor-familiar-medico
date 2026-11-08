@@ -50,15 +50,15 @@ public class MedicamentoControl {
     )
     @GetMapping
     public ResponseEntity<Page<MedicamentoResponse>> listadoPorFiltros(
-            @Parameter(description = "Texto que comienze con el nombre comercial del medicamento", example = "temp")
-            @RequestParam(required = false) String nombreComercial,
-            @Parameter(description = "Texto que comienze con la sustancia activa", example = "parac")
-            @RequestParam(required = false) String sustanciaActiva,
+            @Parameter(description = "Texto que comienze con el nombre comercial del medicamento")
+            @RequestParam(required = false, defaultValue = "") String nombreComercial,
+            @Parameter(description = "Texto que comienze con la sustancia activa")
+            @RequestParam(required = false, defaultValue = "") String sustanciaActiva,
             @Parameter(description = "Opciones para obtener los medicamentos cuyas forma farmaceutica")
             @RequestParam(required = false) FormaFarmaceuticaEnum formaFarmaceutica,
             @Parameter(description = "Opciones para obtener los medicamentos cuyas forma de consumir el medicamento")
             @RequestParam(required = false) ViaAdministracionEnum viaAdministracion,
-            @Parameter(description = "Opciones para obtener los medicamentos ya sea activos `true` o inactivos `false` ", example = "")
+            @Parameter(description = "Opciones para obtener los medicamentos ya sea activos `true` o inactivos `false`")
             @RequestParam(defaultValue = "true") boolean activo,
             @ParameterObject @PageableDefault(size = 15, sort = "nombreComercial", direction = Sort.Direction.ASC)  Pageable pageable
     ){

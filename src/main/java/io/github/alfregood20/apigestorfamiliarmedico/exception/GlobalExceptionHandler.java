@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
 
         ResponseException response = ResponseException.builder()
                 .status(HttpStatus.CONFLICT.value())
-                .error(HttpStatus.CONTENT_TOO_LARGE.getReasonPhrase())
+                .error(HttpStatus.CONFLICT.getReasonPhrase())
                 .menssaje(ex.getMessage())
                 .uri(request.getRequestURI())
                 .timestamp(LocalDateTime.now())

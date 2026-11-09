@@ -17,4 +17,6 @@ public interface AlergiaRepo extends JpaRepository<Alergia, Long> {
            """
     )
     List<Alergia> buscarPorFiltro(@Param("nombre") String nombre,@Param("tipo") TipoAlergiaEnum tipo);
+
+    boolean existsByNombre(String nombre);
 }

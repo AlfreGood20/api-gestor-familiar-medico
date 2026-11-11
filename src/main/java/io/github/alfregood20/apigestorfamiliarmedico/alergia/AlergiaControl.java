@@ -36,7 +36,7 @@ public class AlergiaControl {
             summary = "Eliminar alergia de integrantes",
             description = "Endpoints solo es para eliminar datos, nadien podra acceder"
     )
-    @DeleteMapping
+    @DeleteMapping("/{idAlergia}")
     public ResponseEntity<Void> eliminarPorId(@PathVariable Long idAlergia){
         alergiaServc.eliminarPorId(idAlergia);
         return ResponseEntity.noContent().build();

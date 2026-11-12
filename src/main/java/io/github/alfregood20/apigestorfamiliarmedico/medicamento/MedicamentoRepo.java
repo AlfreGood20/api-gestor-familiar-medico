@@ -15,8 +15,8 @@ public interface MedicamentoRepo extends JpaRepository<Medicamento, Long> {
     @Query(
             """
             SELECT m FROM Medicamento m
-                WHERE LOWER(m.nombreComercial) LIKE (CONCAT(:nombreComercial,'%'))
-                    AND LOWER(m.sustanciaActiva) LIKE (CONCAT(:sustanciaActiva,'%'))
+                WHERE LOWER(m.nombreComercial) LIKE (CONCAT(LOWER(:nombreComercial),'%'))
+                    AND LOWER(m.sustanciaActiva) LIKE (CONCAT(LOWER(:sustanciaActiva),'%'))
                     AND (:formaFarmaceutica IS NULL OR m.formaFarmaceutica = :formaFarmaceutica)
                     AND (:viaAdministracion IS NULL OR m.viaAdministracion = :viaAdministracion)
                     AND (m.activo = :activo)

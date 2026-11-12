@@ -17,7 +17,8 @@ public record ConsultaRequest(
         Long idMedico,
         @NotNull(message = "Es obligatorio")
         @FutureOrPresent(message = "La fecha de la consulta debe ser presente o futura")
-        @JsonFormat(pattern = "yyyy-MM-dd hha", locale = "en")
+        @JsonFormat(pattern = "yyyy-MM-dd h:mma", locale = "en")
+        @Schema(example = "2027-06-07 11:12AM")
         LocalDateTime fechaConsulta,
         @NotBlank(message = "Es obligatorio")
         String motivo

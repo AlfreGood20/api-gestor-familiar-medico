@@ -2,6 +2,7 @@ package io.github.alfregood20.apigestorfamiliarmedico.integrante;
 
 import io.github.alfregood20.apigestorfamiliarmedico.alergia.dto.IntegranteAlergiaRequest;
 import io.github.alfregood20.apigestorfamiliarmedico.configuration.CustomUserDetails;
+import io.github.alfregood20.apigestorfamiliarmedico.consultas.dto.ConsultaResponse;
 import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.IntegranteDetalleResponse;
 import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.IntegranteRequest;
 import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.IntegranteResponse;
@@ -9,6 +10,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -89,11 +95,24 @@ public class IntegranteControl {
             description = "**ROLES:** ADMIN"
     )
     @PutMapping("/{idIntegrante}")
-    public ResponseEntity<IntegranteDetalleResponse> actulizarDatos(
+    public ResponseEntity<IntegranteDetalleResponse> actualizarDatos(
             @AuthenticationPrincipal CustomUserDetails usuario,
             @PathVariable Long idIntegrante,
             @RequestBody @Valid IntegranteRequest request
     ){
         return ResponseEntity.ok(integranteServc.actualizarDatos(usuario, idIntegrante, request));
+    }
+
+    @Operation(
+            summary = "Obtener las consultas medicas de un integrante de la familia",
+            description = "**ROLES:** ADMIN"
+    )
+    @GetMapping("/{idIntegrante}/consultas")
+    public ResponseEntity<Page<ConsultaResponse>> obtenerConsultas(
+            @AuthenticationPrincipal CustomUserDetails usuario,
+            @PathVariable Long idIntegrante,
+            @ParameterObject @PageableDefault(size = 5, sort = "fechaConsulta", direction = Sort.Direction.ASC) Pageable pageable
+    ){
+        return ResponseEntity.ok(integranteServc.obtenerConsultas(usuario, idIntegrante, pageable));
     }
 }

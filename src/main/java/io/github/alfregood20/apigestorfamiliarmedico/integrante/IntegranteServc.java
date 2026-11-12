@@ -4,6 +4,9 @@ import io.github.alfregood20.apigestorfamiliarmedico.alergia.*;
 import io.github.alfregood20.apigestorfamiliarmedico.alergia.dto.IntegranteAlergiaRequest;
 import io.github.alfregood20.apigestorfamiliarmedico.alergia.dto.IntegranteAlergiaResponse;
 import io.github.alfregood20.apigestorfamiliarmedico.configuration.CustomUserDetails;
+import io.github.alfregood20.apigestorfamiliarmedico.consultas.Consulta;
+import io.github.alfregood20.apigestorfamiliarmedico.consultas.ConsultaRepo;
+import io.github.alfregood20.apigestorfamiliarmedico.consultas.dto.ConsultaResponse;
 import io.github.alfregood20.apigestorfamiliarmedico.exception.DuplicateException;
 import io.github.alfregood20.apigestorfamiliarmedico.exception.RecursoNoEncontradoException;
 import io.github.alfregood20.apigestorfamiliarmedico.exception.ReglaNegocioException;
@@ -16,6 +19,9 @@ import io.github.alfregood20.apigestorfamiliarmedico.integrante.enums.TipoSangre
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.Usuario;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.UsuarioRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.internal.CustomizerRegistry;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +35,7 @@ public class IntegranteServc {
     private final UsuarioRepo usuarioRepo;
     private final IntegranteAlergiaRepo integranteAlergiaRepo;
     private final AlergiaRepo alergiaRepo;
+    private final ConsultaRepo consultaRepo;
 
     @Transactional
     public IntegranteResponse crear(CustomUserDetails usuario, IntegranteRequest request){
@@ -121,6 +128,19 @@ public class IntegranteServc {
         return toDetalleResponse(integrante);
     }
 
+    @Transactional(readOnly = true)
+    public Page<ConsultaResponse> obtenerConsultas(
+            CustomUserDetails usuario,
+            Long idIntegrante,
+            Pageable pageable
+    ){
+        Usuario autenticado = buscarUsuarioPorId(usuario.getId());
+        Integrante integrante = buscarIntegrantePorIdYFamilia(idIntegrante, autenticado);
+        Page<Consulta> pageConsultas = consultaRepo.findByIntegranteFamiliaAndIntegrante(autenticado.getFamilia(), integrante, pageable);
+
+        return pageConsultas.map(this::toConsultaResponse);
+    }
+
 
     // METODOS REUTILIZABLES
     private Usuario buscarUsuarioPorId(Long id){
@@ -140,6 +160,29 @@ public class IntegranteServc {
                 .tipoSangre(request.tipoSangre() != null ? request.tipoSangre() : TipoSangreEnum.SIN_DEFINIR)
                 .parentesco(request.parentesco())
                 .build();
+    }
+
+    private ConsultaResponse toConsultaResponse(Consulta entity){
+        String nombreIntegrante = entity.getIntegrante().getNombre()+" "+
+                entity.getIntegrante().getApellidoPaterno()+" "+
+                entity.getIntegrante().getApellidoMaterno();
+
+        String nombreMedico = null;
+
+        if(entity.getMedico() != null){
+            nombreMedico = entity.getMedico().getNombre()+" "+
+                    entity.getMedico().getApellidoPaterno()+" "+
+                    entity.getMedico().getApellidoMaterno();
+        }
+
+        return new ConsultaResponse(
+                entity.getId(),
+                nombreIntegrante,
+                nombreMedico,
+                entity.getMotivo(),
+                entity.getFechaConsulta(),
+                entity.getEstado()
+        );
     }
 
     private IntegranteResponse toResponse(Integrante response){

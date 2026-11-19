@@ -75,6 +75,8 @@ public class SecurityConfig {
 
                         //## endpoits publicos solo para poblar la base de datos ##
 
+                        .requestMatchers("/vacunas/**").permitAll()
+
                         // alergia
                         .requestMatchers("/alergias/**").permitAll()
 

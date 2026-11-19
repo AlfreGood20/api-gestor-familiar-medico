@@ -20,7 +20,6 @@ public interface StockMedicamentoRepo extends JpaRepository<StockMedicamento, Lo
         JOIN s.medicamento m
         WHERE s.familia = :familia
           AND (
-            :nombre IS NULL OR 
             LOWER(m.nombreComercial) LIKE LOWER(CONCAT(:nombre, '%')) OR
             LOWER(m.sustanciaActiva) LIKE LOWER(CONCAT(:nombre, '%'))
           )

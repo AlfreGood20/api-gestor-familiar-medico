@@ -26,4 +26,17 @@ public interface VacunaRepo extends JpaRepository<Vacuna, Long> {
             @Param("dosisTotales") int dosisTotales,
             Pageable pageable
     );
+
+    @Query("""
+        SELECT v FROM Vacuna v
+        JOIN EsquemaVacunacion e ON e.vacuna.id = v.id
+        WHERE LOWER(v.nombre) LIKE CONCAT(LOWER(:nombre),'%')
+        GROUP BY v
+        ORDER BY MIN(e.edadRecomendadaMeses) ASC, v.nombre ASC
+        """
+    )
+    Page<Vacuna> buscarVacunasConEsquema(
+            @Param("nombre") String nombre,
+            Pageable pageable
+    );
 }

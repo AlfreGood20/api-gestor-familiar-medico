@@ -3,10 +3,13 @@ package io.github.alfregood20.apigestorfamiliarmedico.integrante;
 import io.github.alfregood20.apigestorfamiliarmedico.alergia.dto.IntegranteAlergiaRequest;
 import io.github.alfregood20.apigestorfamiliarmedico.configuration.CustomUserDetails;
 import io.github.alfregood20.apigestorfamiliarmedico.consultas.dto.ConsultaResponse;
+import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.CartillaVacunacionResponse;
 import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.IntegranteDetalleResponse;
 import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.IntegranteRequest;
 import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.IntegranteResponse;
+import io.github.alfregood20.apigestorfamiliarmedico.vacunas.enums.EstadoVacunaEnum;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -114,5 +117,30 @@ public class IntegranteControl {
             @ParameterObject @PageableDefault(size = 5, sort = "fechaConsulta", direction = Sort.Direction.ASC) Pageable pageable
     ){
         return ResponseEntity.ok(integranteServc.obtenerConsultas(usuario, idIntegrante, pageable));
+    }
+
+    @Operation(
+            summary = "Obtener cartilla de vacunación de un integrante",
+            description = "Genera y devuelve de forma paginada la cartilla de vacunación del integrante agrupada por vacuna, " +
+                    "calculando automáticamente el estado de cada dosis (APLICADA, PENDIENTE, ATRASADA, FUTURA) " +
+                    "según su edad en meses y el esquema oficial."
+    )
+    @GetMapping("/{idIntegrante}/cartilla-vacunacion")
+    public ResponseEntity<Page<CartillaVacunacionResponse>> obtenerCartillaVacunacion(
+            @AuthenticationPrincipal CustomUserDetails usuario,
+            @PathVariable Long idIntegrante,
+            @Parameter(description = "Filtrar vacunas por coincidencia parcial en su nombre")
+            @RequestParam(required = false, defaultValue = "") String nombreVacuna,
+            @Parameter(description = "Filtrar vacunas que tengan al menos una dosis en el estado indicado (APLICADA, PENDIENTE, ATRASADA, FUTURA)")
+            @RequestParam(required = false) EstadoVacunaEnum estado,
+            @ParameterObject @PageableDefault(size = 5) Pageable pageable
+    ){
+        return ResponseEntity.ok(integranteServc.obtenerCartillaVacunacion(
+                nombreVacuna,
+                estado,
+                idIntegrante,
+                usuario,
+                pageable
+        ));
     }
 }

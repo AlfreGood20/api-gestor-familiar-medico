@@ -11,6 +11,7 @@ import io.github.alfregood20.apigestorfamiliarmedico.exception.DuplicateExceptio
 import io.github.alfregood20.apigestorfamiliarmedico.exception.RecursoNoEncontradoException;
 import io.github.alfregood20.apigestorfamiliarmedico.exception.ReglaNegocioException;
 import io.github.alfregood20.apigestorfamiliarmedico.exception.UsuarioNoEncontradoException;
+import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.CartillaVacunacionResponse;
 import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.IntegranteDetalleResponse;
 import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.IntegranteRequest;
 import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.IntegranteResponse;
@@ -18,14 +19,25 @@ import io.github.alfregood20.apigestorfamiliarmedico.integrante.enums.Parentesco
 import io.github.alfregood20.apigestorfamiliarmedico.integrante.enums.TipoSangreEnum;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.Usuario;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.UsuarioRepo;
+import io.github.alfregood20.apigestorfamiliarmedico.vacunas.*;
+import io.github.alfregood20.apigestorfamiliarmedico.vacunas.dto.AplicacionVacunaResponse;
+import io.github.alfregood20.apigestorfamiliarmedico.vacunas.dto.DosisCartillaResponse;
+import io.github.alfregood20.apigestorfamiliarmedico.vacunas.dto.VacunaResponse;
+import io.github.alfregood20.apigestorfamiliarmedico.vacunas.enums.EstadoVacunaEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cglib.core.internal.CustomizerRegistry;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +48,9 @@ public class IntegranteServc {
     private final IntegranteAlergiaRepo integranteAlergiaRepo;
     private final AlergiaRepo alergiaRepo;
     private final ConsultaRepo consultaRepo;
+    private final EsquemaVacunacionRepo esquemaVacunacionRepo;
+    private final AplicacionVacunaRepo aplicacionVacunaRepo;
+    private final VacunaRepo vacunaRepo;
 
     @Transactional
     public IntegranteResponse crear(CustomUserDetails usuario, IntegranteRequest request){
@@ -141,6 +156,99 @@ public class IntegranteServc {
         return pageConsultas.map(this::toConsultaResponse);
     }
 
+    @Transactional(readOnly = true)
+    public Page<CartillaVacunacionResponse> obtenerCartillaVacunacion(
+            String nombreVacuna,
+            EstadoVacunaEnum estado,
+            Long idIntegrante,
+            CustomUserDetails usuario,
+            Pageable pageable
+    ) {
+        Usuario autenticado = buscarUsuarioPorId(usuario.getId());
+        Integrante integrante = buscarIntegrantePorIdYFamilia(idIntegrante, autenticado);
+
+        // 1. Calcular edad actual del integrante en meses
+        long edadEnMeses = ChronoUnit.MONTHS.between(integrante.getFechaNacimiento(), LocalDate.now());
+        String filtroNombre = (nombreVacuna != null) ? nombreVacuna.trim() : "";
+
+        // 2. Traer las vacunas con esquema paginadas desde BD
+        Page<Vacuna> pageVacunas = vacunaRepo.buscarVacunasConEsquema(filtroNombre, pageable);
+
+        if (pageVacunas.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        List<Vacuna> vacunasPagina = pageVacunas.getContent();
+
+        // 3. Traer en bloque los esquemas y aplicaciones de esas vacunas (cero N+1)
+        Map<Long, List<EsquemaVacunacion>> esquemasPorVacuna = esquemaVacunacionRepo
+                .findByVacunaInOrderByNumeroDosisAsc(vacunasPagina)
+                .stream()
+                .collect(Collectors.groupingBy(e -> e.getVacuna().getId()));
+
+        Map<String, AplicacionVacuna> aplicacionesPorClave = aplicacionVacunaRepo
+                .findByIntegranteAndVacunaIn(integrante, vacunasPagina)
+                .stream()
+                .collect(Collectors.toMap(
+                        a -> a.getVacuna().getId() + "-" + a.getNumeroDosis(),
+                        Function.identity()
+                ));
+
+        // 4. Armar cada CartillaVacunacionResponse
+        List<CartillaVacunacionResponse> contenido = vacunasPagina.stream()
+                .map(vacuna -> {
+                    List<EsquemaVacunacion> esquemas = esquemasPorVacuna.getOrDefault(vacuna.getId(), List.of());
+
+                    List<DosisCartillaResponse> dosisDtos = esquemas.stream()
+                            .map(esquema -> {
+                                String clave = vacuna.getId() + "-" + esquema.getNumeroDosis();
+                                AplicacionVacuna app = aplicacionesPorClave.get(clave);
+
+                                EstadoVacunaEnum estadoCalculado = calcularEstadoDosis(
+                                        app, edadEnMeses, esquema.getEdadRecomendadaMeses()
+                                );
+
+                                AplicacionVacunaResponse appDto = (app != null)
+                                        ? new AplicacionVacunaResponse(
+                                        app.getId(),
+                                        app.getFechaAplicacion(),
+                                        app.getLote(),
+                                        app.getLugarAplicacion()
+                                )
+                                        : null;
+
+                                return new DosisCartillaResponse(
+                                        esquema.getId(),
+                                        esquema.getNumeroDosis(),
+                                        esquema.getEdadRecomendadaMeses(),
+                                        esquema.getIntervaloMinimoDias(),
+                                        esquema.isEsRefuerzo(),
+                                        estadoCalculado,
+                                        appDto
+                                );
+                            })
+                            .toList();
+
+                    int dosisAplicadas = (int) dosisDtos.stream()
+                            .filter(d -> d.estado() == EstadoVacunaEnum.APLICADA)
+                            .count();
+
+                    boolean esquemaCompleto = dosisAplicadas >= vacuna.getDosisTotales();
+
+                    return new CartillaVacunacionResponse(
+                            toVacunaResponse(vacuna),
+                            dosisAplicadas,
+                            esquemaCompleto,
+                            dosisDtos
+                    );
+                })
+                // Si el usuario filtró por estado (ej. ATRASADA o PENDIENTE), filtramos las vacunas que tengan al menos 1 dosis en ese estado
+                .filter(item -> estado == null || item.dosis().stream().anyMatch(d -> d.estado() == estado))
+                .toList();
+
+        return new PageImpl<>(contenido, pageable, pageVacunas.getTotalElements());
+    }
+
 
     // METODOS REUTILIZABLES
     private Usuario buscarUsuarioPorId(Long id){
@@ -235,4 +343,27 @@ public class IntegranteServc {
         );
     }
 
+    private EstadoVacunaEnum calcularEstadoDosis(AplicacionVacuna app, long edadEnMeses, int edadRecomendadaMeses) {
+        if (app != null) {
+            return EstadoVacunaEnum.APLICADA;
+        }
+        if (edadEnMeses > edadRecomendadaMeses) {
+            return EstadoVacunaEnum.ATRASADA;
+        }
+        if (edadEnMeses >= edadRecomendadaMeses - 1) {
+            return EstadoVacunaEnum.PENDIENTE;
+        }
+        return EstadoVacunaEnum.FUTURA; // Asegúrate de tener este valor en tu EstadoVacunaEnum (o usa PENDIENTE)
+    }
+
+    private VacunaResponse toVacunaResponse(Vacuna vacuna) {
+        return new VacunaResponse(
+                vacuna.getId(),
+                vacuna.getNombre(),
+                vacuna.getDescripcion(),
+                vacuna.getContraindicaciones(),
+                vacuna.getEnfermedadPreviene(),
+                vacuna.getDosisTotales()
+        );
+    }
 }

@@ -77,6 +77,8 @@ public class SecurityConfig {
 
                         .requestMatchers("/vacunas/**").permitAll()
 
+                        .requestMatchers("/esquemas-vacunacion/**").permitAll()
+
                         // alergia
                         .requestMatchers("/alergias/**").permitAll()
 

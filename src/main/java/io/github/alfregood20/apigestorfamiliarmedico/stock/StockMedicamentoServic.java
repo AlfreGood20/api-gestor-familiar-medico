@@ -73,7 +73,7 @@ public class StockMedicamentoServic {
         return paginaResponse;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void eliminarPorId(CustomUserDetails usuario, Long idStock){
         Usuario autenticado = buscarUsuarioPorId(usuario.getId());
         StockMedicamento stock = buscarStockPorId(idStock, autenticado);

@@ -66,6 +66,9 @@ public class SecurityConfig {
                         // aplicacion vacunas
                         .requestMatchers("/aplicaciones-vacunas/**").hasRole("ADMIN")
 
+                        // estudios de laboratorio
+                        .requestMatchers("/estudios-laboratorio/**").hasRole("ADMIN")
+
                         // stocks
                         .requestMatchers(HttpMethod.GET,"/stock/**").hasAnyRole("ADMIN","CUIDADOR")
                         .requestMatchers(HttpMethod.POST,"/stock/**").hasAnyRole("ADMIN","CUIDADOR")

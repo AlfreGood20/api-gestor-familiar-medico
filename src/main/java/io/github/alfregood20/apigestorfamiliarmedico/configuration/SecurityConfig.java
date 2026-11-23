@@ -97,6 +97,8 @@ public class SecurityConfig {
                         // swagger
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger", "/api-docs/**").permitAll()
 
+                        .requestMatchers("/ejemplos-sqlprocedural/**").permitAll()
+
                         .anyRequest().denyAll()
                 )
 

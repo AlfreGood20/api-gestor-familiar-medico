@@ -69,6 +69,9 @@ public class SecurityConfig {
                         // estudios de laboratorio
                         .requestMatchers("/estudios-laboratorio/**").hasRole("ADMIN")
 
+                        // recetas
+                        .requestMatchers("/recetas/**").hasRole("ADMIN")
+
                         // stocks
                         .requestMatchers(HttpMethod.GET,"/stock/**").hasAnyRole("ADMIN","CUIDADOR")
                         .requestMatchers(HttpMethod.POST,"/stock/**").hasAnyRole("ADMIN","CUIDADOR")

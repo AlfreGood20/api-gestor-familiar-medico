@@ -72,6 +72,9 @@ public class SecurityConfig {
                         // recetas
                         .requestMatchers("/recetas/**").hasRole("ADMIN")
 
+                        // tomas programadas
+                        .requestMatchers("/tomas/**").hasRole("ADMIN")
+
                         // stocks
                         .requestMatchers(HttpMethod.GET,"/stock/**").hasAnyRole("ADMIN","CUIDADOR")
                         .requestMatchers(HttpMethod.POST,"/stock/**").hasAnyRole("ADMIN","CUIDADOR")

@@ -70,19 +70,20 @@ CREATE TABLE integrantes (
 );
 
 CREATE TABLE alertas (
-	id_alerta BIGINT AUTO_INCREMENT PRIMARY KEY,
-    id_familia BIGINT NOT NULL,
-    id_integrante BIGINT NULL,
-    tipo VARCHAR(20) NOT NULL,
-    mensaje VARCHAR(255) NOT NULL,
-    leida BOOLEAN NOT NULL DEFAULT FALSE,
-    fecha_generacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    
-    CONSTRAINT chk_alertas_tipo CHECK 
-		(tipo IN ('CADUCIDAD','STOCK_BAJO','TOMA_PENDIENTE','CONSULTA_PROXIMA','VACUNA_PROXIMA')),
-        
-	FOREIGN KEY (id_familia) REFERENCES familias(id_familia),
-    FOREIGN KEY (id_integrante) REFERENCES integrantes(id_integrante)
+     id_alerta BIGINT AUTO_INCREMENT PRIMARY KEY,
+     id_familia BIGINT NOT NULL,
+     id_integrante BIGINT NULL,
+     id_referencia BIGINT NULL, -- ID de la vacuna/toma/stock/consulta origen
+     tipo VARCHAR(20) NOT NULL,
+     mensaje VARCHAR(255) NOT NULL,
+     leida BOOLEAN NOT NULL DEFAULT FALSE,
+     fecha_generacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+     CONSTRAINT chk_alertas_tipo CHECK (
+         tipo IN ('CADUCIDAD','STOCK_BAJO','TOMA_PENDIENTE','CONSULTA_PROXIMA','VACUNA_PROXIMA','BIENVENIDA')),
+
+     FOREIGN KEY (id_familia) REFERENCES familias(id_familia) ON DELETE CASCADE,
+     FOREIGN KEY (id_integrante) REFERENCES integrantes(id_integrante) ON DELETE CASCADE
 );
 
 CREATE TABLE alergias (

@@ -72,6 +72,8 @@ public class SecurityConfig {
                         // recetas
                         .requestMatchers("/recetas/**").hasRole("ADMIN")
 
+                        .requestMatchers("/alertas/**").hasRole("ADMIN")
+
                         // tomas programadas
                         .requestMatchers("/tomas/**").hasRole("ADMIN")
 

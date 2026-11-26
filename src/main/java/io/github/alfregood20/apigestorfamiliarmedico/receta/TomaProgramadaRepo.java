@@ -95,4 +95,21 @@ public interface TomaProgramadaRepo extends JpaRepository<TomaProgramada, Long> 
             @Param("inicio") LocalDateTime inicio,
             @Param("fin") LocalDateTime fin
     );
+
+    @Query("""
+        SELECT t FROM TomaProgramada t
+        JOIN FETCH t.detalleReceta d
+        JOIN FETCH d.medicamento m
+        JOIN FETCH d.receta r
+        JOIN FETCH r.integrante i
+        JOIN FETCH i.familia f
+        WHERE t.estado = :estado
+          AND r.activa = true
+          AND t.fechaHoraProgramada BETWEEN :inicio AND :fin
+        """)
+    List<TomaProgramada> buscarPendientesParaAlerta(
+            @Param("estado") EstadoTomaEnum estado,
+            @Param("inicio") LocalDateTime inicio,
+            @Param("fin") LocalDateTime fin
+    );
 }

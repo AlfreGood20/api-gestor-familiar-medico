@@ -54,4 +54,29 @@ public class AuthControl {
     public ResponseEntity<MeResponse> me(@AuthenticationPrincipal CustomUserDetails usuario){
         return ResponseEntity.ok(authServic.autenticado(usuario));
     }
+
+    @Operation(
+            summary = "Actualizar mi perfil",
+            description = "Permite al usuario autenticado actualizar su nombre, apellidos, teléfono y correo electrónico."
+    )
+    @PutMapping("/me")
+    public ResponseEntity<MeResponse> actualizarMe(
+            @AuthenticationPrincipal CustomUserDetails usuario,
+            @Valid @RequestBody PerfilUpdate request
+    ) {
+        return ResponseEntity.ok(authServic.actualizarPerfil(usuario, request));
+    }
+
+    @Operation(
+            summary = "Cambiar mi contraseña",
+            description = "Permite al usuario autenticado cambiar su contraseña validando previamente su contraseña actual."
+    )
+    @PatchMapping("/me/password")
+    public ResponseEntity<Void> cambiarContrasena(
+            @AuthenticationPrincipal CustomUserDetails usuario,
+            @Valid @RequestBody PerfilContrasenaUpdate request
+    ) {
+        authServic.cambiarContrasena(usuario, request);
+        return ResponseEntity.noContent().build();
+    }
 }

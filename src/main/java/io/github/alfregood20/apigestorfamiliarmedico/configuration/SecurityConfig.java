@@ -48,7 +48,7 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/auth/login","/auth/registro").permitAll()
-                        .requestMatchers("/auth/me", "/auth/logout").authenticated()
+                        .requestMatchers("/auth/me/**", "/auth/logout").authenticated()
                         .requestMatchers("/health").permitAll()
 
                         // integrantes

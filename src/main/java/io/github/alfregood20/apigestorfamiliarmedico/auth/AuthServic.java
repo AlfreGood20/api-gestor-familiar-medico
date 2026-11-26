@@ -3,6 +3,8 @@ package io.github.alfregood20.apigestorfamiliarmedico.auth;
 import io.github.alfregood20.apigestorfamiliarmedico.auth.dto.*;
 import io.github.alfregood20.apigestorfamiliarmedico.configuration.CustomUserDetails;
 import io.github.alfregood20.apigestorfamiliarmedico.exception.DuplicateException;
+import io.github.alfregood20.apigestorfamiliarmedico.exception.ReglaNegocioException;
+import io.github.alfregood20.apigestorfamiliarmedico.exception.UsuarioNoEncontradoException;
 import io.github.alfregood20.apigestorfamiliarmedico.familia.Familia;
 import io.github.alfregood20.apigestorfamiliarmedico.familia.FamiliaRepo;
 import io.github.alfregood20.apigestorfamiliarmedico.familia.dto.FamiliaResponse;
@@ -116,17 +118,67 @@ public class AuthServic {
         );
     }
 
-    public MeResponse autenticado(CustomUserDetails usuario){
-        Usuario autenticado = usuario.getUsuario();
+    @Transactional
+    public MeResponse actualizarPerfil(CustomUserDetails usuario, PerfilUpdate request) {
+        Usuario autenticado = usuarioRepo.findById(usuario.getId())
+                .orElseThrow(() -> new UsuarioNoEncontradoException("Usuario no encontrado"));
+
+        if (!autenticado.getCorreo().equalsIgnoreCase(request.correo())
+                && usuarioRepo.existsByCorreo(request.correo())) {
+            throw new DuplicateException("Correo: " + request.correo() + " ,ya se encuentra registrado");
+        }
+
+        autenticado.setNombre(request.nombre());
+        autenticado.setApellidoPaterno(request.apellidoPaterno());
+        autenticado.setApellidoMaterno(request.apellidoMaterno());
+        autenticado.setCorreo(request.correo());
+        autenticado.setTelefono(request.telefono());
+
+        autenticado = usuarioRepo.save(autenticado);
+
         return new MeResponse(
-          autenticado.getId(),
-          autenticado.getNombre(),
-          autenticado.getApellidoPaterno(),
-          autenticado.getApellidoMaterno(),
-          autenticado.getCorreo(),
-          autenticado.getTelefono(),
-          autenticado.getRol(),
-          autenticado.getFechaRegistro()
+                autenticado.getId(),
+                autenticado.getNombre(),
+                autenticado.getApellidoPaterno(),
+                autenticado.getApellidoMaterno(),
+                autenticado.getCorreo(),
+                autenticado.getTelefono(),
+                autenticado.getRol(),
+                autenticado.getFechaRegistro()
+        );
+    }
+
+    @Transactional
+    public void cambiarContrasena(CustomUserDetails usuario, PerfilContrasenaUpdate request) {
+        Usuario autenticado = usuarioRepo.findById(usuario.getId())
+                .orElseThrow(() -> new UsuarioNoEncontradoException("Usuario no encontrado"));
+
+        if (!encoder.matches(request.contrasenaActual(), autenticado.getContrasenaHash())) {
+            throw new ReglaNegocioException("La contraseña actual es incorrecta");
+        }
+
+        if (encoder.matches(request.nuevaContrasena(), autenticado.getContrasenaHash())) {
+            throw new ReglaNegocioException("La nueva contraseña debe ser diferente a la actual");
+        }
+
+        autenticado.setContrasenaHash(encoder.encode(request.nuevaContrasena()));
+        usuarioRepo.save(autenticado);
+    }
+
+    @Transactional(readOnly = true)
+    public MeResponse autenticado(CustomUserDetails usuario) {
+        Usuario autenticado = usuarioRepo.findById(usuario.getId())
+                .orElseThrow(() -> new UsuarioNoEncontradoException("Usuario no encontrado"));
+
+        return new MeResponse(
+                autenticado.getId(),
+                autenticado.getNombre(),
+                autenticado.getApellidoPaterno(),
+                autenticado.getApellidoMaterno(),
+                autenticado.getCorreo(),
+                autenticado.getTelefono(),
+                autenticado.getRol(),
+                autenticado.getFechaRegistro()
         );
     }
 }

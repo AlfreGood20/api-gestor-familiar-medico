@@ -3,6 +3,7 @@ package io.github.alfregood20.apigestorfamiliarmedico.usuario;
 import io.github.alfregood20.apigestorfamiliarmedico.configuration.CustomUserDetails;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.dto.CuidadorRequest;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.dto.CuidadorResponse;
+import io.github.alfregood20.apigestorfamiliarmedico.usuario.dto.CuidadorUpdate;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.dto.EstadoRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -71,5 +72,30 @@ public class UsuarioControl {
     ){
         usuarioServic.eliminarCuidador(usuario, idCuidador);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(
+            summary = "Obtener detalle de un cuidador",
+            description = "Devuelve los datos personales, estado y fecha de registro de un cuidador perteneciente a la familia del administrador."
+    )
+    @GetMapping("/cuidadores/{idCuidador}")
+    public ResponseEntity<CuidadorResponse> obtenerDetalleCuidador(
+            @AuthenticationPrincipal CustomUserDetails usuario,
+            @PathVariable Long idCuidador
+    ) {
+        return ResponseEntity.ok(usuarioServic.obtenerDetalleCuidador(usuario, idCuidador));
+    }
+
+    @Operation(
+            summary = "Actualizar datos de un cuidador",
+            description = "Permite modificar el nombre, apellidos, teléfono y correo electrónico de un cuidador de la familia."
+    )
+    @PutMapping("/cuidadores/{idCuidador}")
+    public ResponseEntity<CuidadorResponse> actualizarCuidador(
+            @AuthenticationPrincipal CustomUserDetails usuario,
+            @PathVariable Long idCuidador,
+            @Valid @RequestBody CuidadorUpdate request
+    ) {
+        return ResponseEntity.ok(usuarioServic.actualizarCuidador(usuario, idCuidador, request));
     }
 }

@@ -6,6 +6,7 @@ import io.github.alfregood20.apigestorfamiliarmedico.exception.RecursoNoEncontra
 import io.github.alfregood20.apigestorfamiliarmedico.exception.UsuarioNoEncontradoException;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.dto.CuidadorRequest;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.dto.CuidadorResponse;
+import io.github.alfregood20.apigestorfamiliarmedico.usuario.dto.CuidadorUpdate;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.dto.EstadoRequest;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.enums.EstadoUsuarioEnum;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.enums.RolEnum;
@@ -77,6 +78,39 @@ public class UsuarioServic {
 
         usuarioRepo.delete(cuidador);
     }
+
+    @Transactional(readOnly = true)
+    public CuidadorResponse obtenerDetalleCuidador(CustomUserDetails usuario, Long idCuidador) {
+        Usuario autenticado = buscarUsuarioPorId(usuario.getId());
+
+        Usuario cuidador = usuarioRepo.findByIdAndFamiliaAndRol(idCuidador, autenticado.getFamilia(), RolEnum.CUIDADOR)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Cuidador con ID:" + idCuidador + " no encontrado"));
+
+        return toCuidadorResponse(cuidador);
+    }
+
+    @Transactional
+    public CuidadorResponse actualizarCuidador(CustomUserDetails usuario, Long idCuidador, CuidadorUpdate request) {
+        Usuario autenticado = buscarUsuarioPorId(usuario.getId());
+
+        Usuario cuidador = usuarioRepo.findByIdAndFamiliaAndRol(idCuidador, autenticado.getFamilia(), RolEnum.CUIDADOR)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Cuidador con ID:" + idCuidador + " no encontrado"));
+
+        // Validar que el correo nuevo no pertenezca a otro usuario distinto
+        if (!cuidador.getCorreo().equalsIgnoreCase(request.correo()) && usuarioRepo.existsByCorreo(request.correo())) {
+            throw new DuplicateException("Correo: " + request.correo() + " ,ya se encuentra registrado");
+        }
+
+        cuidador.setNombre(request.nombre());
+        cuidador.setApellidoPaterno(request.apellidoPaterno());
+        cuidador.setApellidoMaterno(request.apellidoMaterno());
+        cuidador.setCorreo(request.correo());
+        cuidador.setTelefono(request.telefono());
+
+        cuidador = usuarioRepo.save(cuidador);
+        return toCuidadorResponse(cuidador);
+    }
+
 
     // METODOS REUTILIZABLES
     private Usuario buscarUsuarioPorId(Long id){

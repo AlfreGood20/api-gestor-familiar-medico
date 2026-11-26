@@ -9,7 +9,7 @@ public record CuidadorResponse(
         Long id,
         String nombre,
         String apellidoPaterno,
-        String aepllidoMaterno,
+        String apellidoMaterno,
         String correo,
         String telefono,
         RolEnum rol,

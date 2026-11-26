@@ -8,6 +8,7 @@ import io.github.alfregood20.apigestorfamiliarmedico.consultas.dto.ConsultaRespo
 import io.github.alfregood20.apigestorfamiliarmedico.consultas.enums.EstadoConsultaEnum;
 import io.github.alfregood20.apigestorfamiliarmedico.especialidad.Especialidad;
 import io.github.alfregood20.apigestorfamiliarmedico.especialidad.MedicoEspecialidadRepo;
+import io.github.alfregood20.apigestorfamiliarmedico.estudio.EstudioLaboratorioRepo;
 import io.github.alfregood20.apigestorfamiliarmedico.exception.RecursoNoEncontradoException;
 import io.github.alfregood20.apigestorfamiliarmedico.exception.ReglaNegocioException;
 import io.github.alfregood20.apigestorfamiliarmedico.exception.UsuarioNoEncontradoException;
@@ -17,6 +18,7 @@ import io.github.alfregood20.apigestorfamiliarmedico.integrante.dto.IntegranteRe
 import io.github.alfregood20.apigestorfamiliarmedico.medico.Medico;
 import io.github.alfregood20.apigestorfamiliarmedico.medico.MedicoRepo;
 import io.github.alfregood20.apigestorfamiliarmedico.medico.dto.MedicoResponse;
+import io.github.alfregood20.apigestorfamiliarmedico.receta.RecetaRepo;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.Usuario;
 import io.github.alfregood20.apigestorfamiliarmedico.usuario.UsuarioRepo;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,8 @@ public class ConsultaServ {
     private final IntegranteRepo integranteRepo;
     private final MedicoRepo medicoRepo;
     private final MedicoEspecialidadRepo medicoEspecialidadRepo;
+    private final EstudioLaboratorioRepo estudioLaboratorioRepo;
+    private final RecetaRepo recetaRepo;
 
     @Transactional
     public ConsultaResponse crearNuevo(CustomUserDetails usuario, ConsultaRequest request){
@@ -130,6 +134,10 @@ public class ConsultaServ {
     public void eliminarPorId(CustomUserDetails usuario,Long idConsulta){
         Usuario autenticado = buscarUsuarioPorId(usuario.getId());
         Consulta consulta = buscarConsultaPorId(idConsulta, autenticado);
+
+        if (estudioLaboratorioRepo.existsByConsultaId(idConsulta) || recetaRepo.existsByConsultaId(idConsulta)) {
+            throw new ReglaNegocioException("No se puede eliminar la consulta porque tiene estudios o recetas médicas vinculadas");
+        }
 
         consultaRepo.delete(consulta);
     }

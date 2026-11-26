@@ -37,4 +37,6 @@ public interface RecetaRepo extends JpaRepository<Receta, Long> {
             @Param("busqueda") String busqueda,
             Pageable pageable
     );
+
+    boolean existsByConsultaId(Long idConsulta);
 }

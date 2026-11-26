@@ -38,4 +38,6 @@ public interface EstudioLaboratorioRepo extends JpaRepository<EstudioLaboratorio
             @Param("busqueda") String busqueda,
             Pageable pageable
     );
+
+    boolean existsByConsultaId(Long idConsulta);
 }

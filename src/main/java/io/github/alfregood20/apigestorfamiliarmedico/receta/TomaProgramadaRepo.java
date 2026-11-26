@@ -64,4 +64,35 @@ public interface TomaProgramadaRepo extends JpaRepository<TomaProgramada, Long> 
             @Param("familia") Familia familia,
             @Param("estado") EstadoTomaEnum estado
     );
+
+    @Query("""
+        SELECT COUNT(t) FROM TomaProgramada t
+        JOIN t.detalleReceta d
+        JOIN d.receta r
+        JOIN r.integrante i
+        WHERE i.familia = :familia
+          AND t.fechaHoraProgramada BETWEEN :inicio AND :fin
+          AND t.estado = :estado
+        """)
+    int contarPorFamiliaRangoYEstado(
+            @Param("familia") Familia familia,
+            @Param("inicio") LocalDateTime inicio,
+            @Param("fin") LocalDateTime fin,
+            @Param("estado") EstadoTomaEnum estado
+    );
+
+    @Query("""
+        SELECT COUNT(t) FROM TomaProgramada t
+        JOIN t.detalleReceta d
+        JOIN d.receta r
+        JOIN r.integrante i
+        WHERE i.familia = :familia
+          AND t.fechaHoraProgramada BETWEEN :inicio AND :fin
+          AND t.estado <> 'CANCELADA'
+        """)
+    int contarTotalesHoyPorFamilia(
+            @Param("familia") Familia familia,
+            @Param("inicio") LocalDateTime inicio,
+            @Param("fin") LocalDateTime fin
+    );
 }

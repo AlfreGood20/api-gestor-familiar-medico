@@ -69,6 +69,9 @@ public class SecurityConfig {
                         // estudios de laboratorio
                         .requestMatchers("/estudios-laboratorio/**").hasRole("ADMIN")
 
+                        // dashboard
+                        .requestMatchers("/dashboard/**").hasRole("ADMIN")
+
                         // recetas
                         .requestMatchers("/recetas/**").hasRole("ADMIN")
 

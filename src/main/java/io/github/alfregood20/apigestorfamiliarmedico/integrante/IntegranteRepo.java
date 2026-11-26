@@ -9,4 +9,6 @@ public interface IntegranteRepo extends JpaRepository<Integrante, Long> {
 
     List<Integrante> findByFamilia (Familia familia);
     Optional<Integrante> findByIdAndFamilia(Long idIntegrate, Familia familia);
+
+    int countByFamilia(Familia familia);
 }

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 public interface StockMedicamentoRepo extends JpaRepository<StockMedicamento, Long> {
@@ -38,4 +39,8 @@ public interface StockMedicamentoRepo extends JpaRepository<StockMedicamento, Lo
     );
 
     boolean existsByMedicamentoAndFamilia(Medicamento medicamento, Familia familia);
+
+    // PARA EL DASHBOARD
+    int countByFamilia(Familia familia);
+    int countByFamiliaAndEstadoAndFechaCaducidadBetween(Familia familia, EstadoStockEnum estado, LocalDate inicio, LocalDate fin);
 }

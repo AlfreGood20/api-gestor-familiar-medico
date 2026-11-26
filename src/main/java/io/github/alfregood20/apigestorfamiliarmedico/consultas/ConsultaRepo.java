@@ -12,6 +12,8 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public interface ConsultaRepo extends JpaRepository<Consulta, Long> {
@@ -47,4 +49,9 @@ public interface ConsultaRepo extends JpaRepository<Consulta, Long> {
             @Param("busqueda") String busqueda,
             Pageable pageable
     );
+
+    int countByEstadoAndIntegranteFamilia(EstadoConsultaEnum estado, Familia integranteFamilia);
+
+    List<Consulta> findByIntegranteFamiliaAndEstadoAndFechaConsultaGreaterThanEqualOrderByFechaConsultaAsc(
+            Familia familia, EstadoConsultaEnum estado, LocalDateTime ahora, Pageable pageable);
 }

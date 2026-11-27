@@ -47,66 +47,84 @@ public class SecurityConfig {
 
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/auth/login","/auth/registro").permitAll()
+
+                        // Públicos y sesión
+                        .requestMatchers("/auth/login", "/auth/registro", "/health").permitAll()
                         .requestMatchers("/auth/me/**", "/auth/logout").authenticated()
-                        .requestMatchers("/health").permitAll()
 
-                        // integrantes
+                        // Swagger
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger", "/api-docs/**").permitAll()
+
+                        // Usuarios / Cuidadores (solo ADMIN)
+                        .requestMatchers("/usuarios/**").hasRole("ADMIN")
+
+                        // Integrantes (solo lectura para CUIDADOR; todo cambio exclusivo ADMIN)
                         .requestMatchers(HttpMethod.GET, "/integrantes/**").hasAnyRole("ADMIN", "CUIDADOR")
-                        .requestMatchers(HttpMethod.POST, "/integrantes/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/integrantes/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/integrantes/**").hasRole("ADMIN")
+                        .requestMatchers("/integrantes/**").hasRole("ADMIN")
 
-                        // usuarios
-                        .requestMatchers("/usuarios/cuidadores/**").hasRole("ADMIN")
+                        // Consultas médicas
+                        .requestMatchers(HttpMethod.GET, "/consultas/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.POST, "/consultas/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.PUT, "/consultas/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.PATCH, "/consultas/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/consultas/**").hasRole("ADMIN")
 
-                        // consultas
-                        .requestMatchers("/consultas/**").hasRole("ADMIN")
+                        // Aplicaciones de vacunas
+                        .requestMatchers(HttpMethod.GET, "/aplicaciones-vacunas/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.POST, "/aplicaciones-vacunas/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.PUT, "/aplicaciones-vacunas/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/aplicaciones-vacunas/**").hasRole("ADMIN")
 
-                        // aplicacion vacunas
-                        .requestMatchers("/aplicaciones-vacunas/**").hasRole("ADMIN")
+                        // Estudios de laboratorio
+                        .requestMatchers(HttpMethod.GET, "/estudios-laboratorio/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.POST, "/estudios-laboratorio/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.PUT, "/estudios-laboratorio/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.PATCH, "/estudios-laboratorio/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/estudios-laboratorio/**").hasRole("ADMIN")
 
-                        // estudios de laboratorio
-                        .requestMatchers("/estudios-laboratorio/**").hasRole("ADMIN")
+                        // Dashboard
+                        .requestMatchers(HttpMethod.GET, "/dashboard/**").hasAnyRole("ADMIN", "CUIDADOR")
 
-                        // dashboard
-                        .requestMatchers("/dashboard/**").hasRole("ADMIN")
+                        // Recetas médicas
+                        .requestMatchers(HttpMethod.GET, "/recetas/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.POST, "/recetas/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.PUT, "/recetas/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.PATCH, "/recetas/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/recetas/**").hasRole("ADMIN")
 
-                        // recetas
-                        .requestMatchers("/recetas/**").hasRole("ADMIN")
+                        // Alertas
+                        .requestMatchers(HttpMethod.GET, "/alertas/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.PATCH, "/alertas/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/alertas/**").hasRole("ADMIN")
 
-                        .requestMatchers("/alertas/**").hasRole("ADMIN")
+                        // Tomas programadas
+                        .requestMatchers(HttpMethod.GET, "/tomas/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.PATCH, "/tomas/**").hasAnyRole("ADMIN", "CUIDADOR")
 
-                        // tomas programadas
-                        .requestMatchers("/tomas/**").hasRole("ADMIN")
-
-                        // stocks
-                        .requestMatchers(HttpMethod.GET,"/stock/**").hasAnyRole("ADMIN","CUIDADOR")
-                        .requestMatchers(HttpMethod.POST,"/stock/**").hasAnyRole("ADMIN","CUIDADOR")
-                        .requestMatchers(HttpMethod.PUT,"/stock/**").hasAnyRole("ADMIN","CUIDADOR")
-                        .requestMatchers(HttpMethod.PATCH,"/stock/**").hasAnyRole("ADMIN","CUIDADOR")
+                        // Stock de medicamentos
+                        .requestMatchers(HttpMethod.GET, "/stock/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.POST, "/stock/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.PUT, "/stock/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(HttpMethod.PATCH, "/stock/**").hasAnyRole("ADMIN", "CUIDADOR")
                         .requestMatchers(HttpMethod.DELETE, "/stock/**").hasRole("ADMIN")
 
-                        // medicos
+                        // Médicos
+                        .requestMatchers(HttpMethod.GET, "/medicos/**").hasAnyRole("ADMIN", "CUIDADOR")
                         .requestMatchers("/medicos/**").hasRole("ADMIN")
 
-                        //## endpoits publicos solo para poblar la base de datos ##
-
-                        .requestMatchers("/vacunas/**").permitAll()
-
-                        .requestMatchers("/esquemas-vacunacion/**").permitAll()
-
-                        // alergia
-                        .requestMatchers("/alergias/**").permitAll()
-
-                        // especialidades
-                        .requestMatchers("/especialidades/**").permitAll()
-
-                        // medicamentos
-                        .requestMatchers("/medicamentos/**").permitAll()
-
-                        // swagger
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger", "/api-docs/**").permitAll()
+                        // Catálogos
+                        .requestMatchers(HttpMethod.GET,
+                                "/vacunas/**",
+                                "/esquemas-vacunacion/**",
+                                "/alergias/**",
+                                "/especialidades/**",
+                                "/medicamentos/**").hasAnyRole("ADMIN", "CUIDADOR")
+                        .requestMatchers(
+                                "/vacunas/**",
+                                "/esquemas-vacunacion/**",
+                                "/alergias/**",
+                                "/especialidades/**",
+                                "/medicamentos/**").denyAll()
 
                         .anyRequest().denyAll()
                 )
